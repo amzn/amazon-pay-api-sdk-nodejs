@@ -1,9 +1,9 @@
-# Amazon Pay SDK-V2 (NODE.JS)
+# Amazon Pay API SDK (NODE.JS)
 Amazon Pay Checkout v2 Integration
 
-Please note the Amazon Pay V2 SDK can only be used for V2-specific API calls (e.g., Alexa Delivery Trackers, In-Store API, Checkout v2, etc.)
+Please note the Amazon Pay API SDK can only be used for API calls to the pay-api.amazon.com|eu|jp endpoint.
 
-If you are developing an integration using the original [Amazon Pay API Reference Guide](https://developer.amazon.com/docs/amazon-pay-api/intro.html), then you will need to use the original [Amazon Pay SDK (NODE.JS)](https://github.com/amzn/amazon-pay-sdk-nodejs).
+If you need to make an Amazon Pay API call that uses the mws.amazonservices.com|jp or mws-eu.amazonservices.com endpoint, then you will need to use the original [Amazon Pay SDK (NODE.JS)](https://github.com/amzn/amazon-pay-sdk-nodejs).
 
 ## Requirements
 
