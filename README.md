@@ -17,20 +17,28 @@ If you need to make an Amazon Pay API call that uses the mws.amazonservices.com|
 
 ## Public and Private Keys
 
-MWS access keys, MWS secret keys, and MWS authorization tokens from previous MWS or Amazon Pay V1 integrations cannot be used with this SDK.
+MWS access keys, MWS secret keys, and MWS authorization tokens from previous MWS integrations cannot be used with this SDK.
 
-You will need to generate your own public/private key pair to make API calls with this SDK.  This can be done using openssl commands:
+You will need to generate your own public/private key pair to make API calls with this SDK.
+
+In Windows 10 this can be done with ssh-keygen commands:
 
 ```
-    openssl genrsa -out private.pem 2048
-    openssl rsa -in private.pem -pubout > public.pub
+ssh-keygen -t rsa -b 2048 -f private.pem
+ssh-keygen -f private.pem -e -m PKCS8 > public.pub
+```
+
+In Linux or macOS this can be done using openssl commands:
+
+```
+openssl genrsa -out private.pem 2048
+openssl rsa -in private.pem -pubout > public.pub
 ```
 
 The first command above generates a private key and the second line uses the private key to generate a public key.
 
-To associate the key with your account, send an email to amazon-pay-delivery-notifications@amazon.com that includes (1) your *public* key and (2) your Merchant ID.  Do not send your private key to Amazon (or anyone else) under any circumstance!
-
-In your Seller Central account, within 1-2 business days, the account administrator will receive a message that includes the public_key_id you will need to use the SDK.
+To associate the key with your account, follow the instructions here to
+[Get your Public Key ID](http://amazonpaycheckoutintegrationguide.s3.amazonaws.com/amazon-pay-checkout/get-set-up-for-integration.html#4-get-your-public-key-id).
 
 ## Configuration
 
@@ -88,7 +96,7 @@ The headers field is not optional for create/POST calls below because it require
 * **updateChargePermission**(chargePermissionId, payload, headers = null) &#8594; PATCH to `${version}/chargePermissions/${chargePermissionId}`
 * **closeChargePermission**(chargePermissionId, payload, headers = null) &#8594; DELETE to `${version}/chargePermissions/${chargePermissionId}/close`
 
-### Charge object
+### Checkout v2 Charge object
 * **createCharge**(payload, headers) &#8594; POST to `${version}/charges`
 * **getCharge**(chargeId, headers = null) &#8594; GET to `${version}/charges/${chargeId}`
 * **captureCharge**(chargeId, payload, headers) &#8594; POST to `${version}/charges/${chargeId}/capture`
