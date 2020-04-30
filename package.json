@@ -1,0 +1,23 @@
+{
+  "name": "amazon-pay-api-sdk-nodejs",
+  "version": "2.0.0",
+  "description": "Amazon Pay Checkout V2 Integration",
+  "main": "src/client.js",
+  "directories": {},
+  "dependencies": {
+    "request": "^2.88.0",
+    "uuid": "^3.3.3"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.2.2"
+  },
+  "scripts": {
+    "test": "mocha tst/ --timeout 15000"
+  },
+  "author": {
+    "name": "Amazon Pay API SDK",
+    "email": "amazon-pay-sdk@amazon.com"
+  },
+  "license": "Apache-2.0"
+}
