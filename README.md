@@ -123,7 +123,7 @@ Four quick steps are needed to make an API call:
 Step 1. Construct a Client (using the previously defined Config object).
 
 ``` js
-    const Client = require('./src/client');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const testPayClient = new Client.AmazonPayClient(config);
     // -or-
@@ -178,7 +178,7 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 
 ``` js
     const fs = require('fs');
-    const Client = require('../src/client');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
         publicKeyId: 'ABC123DEF456XYZ',
@@ -204,7 +204,7 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 ``` js
     const fs = require('fs');
     const uuidv4 = require('uuid/v4');
-    const Client = require('../src/client');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
         publicKeyId: 'ABC123DEF456XYZ',
@@ -233,7 +233,7 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 ``` js
     const fs = require('fs');
     const uuidv4 = require('uuid/v4');
-    const Client = require('../src/client');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
         publicKeyId: 'ABC123DEF456XYZ',
@@ -256,7 +256,7 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 ``` js
     const fs = require('fs');
     const uuidv4 = require('uuid/v4');
-    const Client = require('../src/client');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
         publicKeyId: 'ABC123DEF456XYZ',
@@ -295,7 +295,7 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 ``` js
     const fs = require('fs');
     const uuidv4 = require('uuid/v4');
-    const Client = require('../src/client');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
         publicKeyId: 'ABC123DEF456XYZ',
@@ -343,7 +343,7 @@ Example call to generateButtonSignature function:
 ``` js
     const fs = require('fs');
     const uuidv4 = require('uuid/v4');
-    const Client = require('../src/client');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
         publicKeyId: 'ABC123DEF456XYZ',
