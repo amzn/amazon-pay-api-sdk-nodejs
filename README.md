@@ -248,7 +248,7 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 
     const checkoutSessionId = 00000000-0000-0000-0000-000000000000;
     const testPayClient = new Client.WebStoreClient(config);
-    const response = testPayClient.createCheckoutSession(checkoutSessionId, headers);
+    const response = testPayClient.getCheckoutSession(checkoutSessionId, headers);
 ```
 
 ## Checkout v2 - Update Checkout Session
@@ -287,7 +287,7 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 
     const checkoutSessionId = 00000000-0000-0000-0000-000000000000;
     const testPayClient = new Client.WebStoreClient(config);
-    const response = testPayClient.createCheckoutSession(checkoutSessionId, payload);
+    const response = testPayClient.updateCheckoutSession(checkoutSessionId, payload);
 ```
 
 ## Checkout v2 - Capture Charge
@@ -317,7 +317,7 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 
     const chargeId = 'S01-0000000-0000000-C000000';
     const testPayClient = new Client.WebStoreClient(config);
-    const response = testPayClient.createCheckoutSession(chargeId, payload, headers);
+    const response = testPayClient.captureCharge(chargeId, payload, headers);
 ```
 
 ## In Store MerchantScan
