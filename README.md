@@ -88,6 +88,9 @@ The headers field is not optional for create/POST calls below because it require
     };
 ```
 
+### Amazon Checkout v2 Buyer object
+* **getBuyer**($buyerToken, $headers = null) &#8594; GET to `${version}/buyer/{$buyerToken}`
+
 ### Checkout v2 CheckoutSession object
 * **createCheckoutSession**(payload, headers) &#8594; POST to `${version}/checkoutSessions`
 * **getCheckoutSession**(checkoutSessionId, headers = null) &#8594; GET to `${version}/checkoutSessions/${checkoutSessionId}`

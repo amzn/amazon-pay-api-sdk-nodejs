@@ -136,6 +136,20 @@ class WebStoreClient extends AmazonPayClient {
         super(configArgs);
     }
 
+    /** API to get the Buyer object
+     *   - Get Buyer details can include buyer ID, name, email address, postal code, and country code
+     *   - when used with the Amazon.Pay.renderButton 'SignIn' productType and corresponding signInScopes
+     * @param {String} buyerToken - The checkout session Id
+     * @param {Object} [headers=null] - The headers for the request
+     **/
+    getBuyer(buyerToken, headers = null) {
+        return this.apiCall({
+            method: 'GET',
+            urlFragment: `buyer/${buyerToken}`,
+            headers: headers
+        });
+    }
+
     /** API to create a CheckoutSession object
      *   - Creates a new CheckoutSession object.
      * @see https://amazonpaycheckoutintegrationguide.s3.amazonaws.com/amazon-pay-api-v2/checkout-session.html#create-checkout-session

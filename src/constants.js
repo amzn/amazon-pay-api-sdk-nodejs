@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    SDK_VERSION: '2.0.1',
+    SDK_VERSION: '2.1.0',
     API_VERSION: 'v2',
     RETRIES: 3,
     API_ENDPOINTS: {

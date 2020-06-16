@@ -18,8 +18,12 @@ function getTimestamp() {
     return date.toISOString().split('.')[0] + 'Z';
 }
 
-function getAPIEndpointBaseURL (region) {
-    return constants.API_ENDPOINTS[constants.REGION_MAP[region.toLowerCase()]];
+function getAPIEndpointBaseURL (configArgs) {
+    if ((configArgs.overrideServiceUrl) && (configArgs.overrideServiceUrl.length > 0)) {
+        process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0; // devo environment using self-signed certificate
+        return configArgs.overrideServiceUrl;
+    } else
+        return constants.API_ENDPOINTS[constants.REGION_MAP[configArgs.region.toLowerCase()]];
 }
 
 function invokeApi(configArgs, apiOptions) {
@@ -28,7 +32,7 @@ function invokeApi(configArgs, apiOptions) {
         method: apiOptions.method,
         json: false,
         headers: apiOptions.headers,
-        url: `https://${getAPIEndpointBaseURL(configArgs.region)}/${apiOptions.urlFragment}${getQueryString(apiOptions.queryParams)}`,
+        url: `https://${getAPIEndpointBaseURL(configArgs)}/${apiOptions.urlFragment}${getQueryString(apiOptions.queryParams)}`,
         body: apiOptions.payload
     };
 
@@ -129,7 +133,7 @@ function signHeaders(configArgs, options) {
     Object.assign(headers, options.headers);
 
     headers['x-amz-pay-region'] = configArgs.region;
-    headers['x-amz-pay-host'] =  getAPIEndpointBaseURL(configArgs.region);
+    headers['x-amz-pay-host'] =  getAPIEndpointBaseURL(configArgs);
     headers['x-amz-pay-date'] = getTimestamp();
     headers['content-type'] =  'application/json';
     headers['accept'] = 'application/json';

@@ -18,10 +18,10 @@ var chargeId;
 const merchantScanPayload = {
     scanData: "UKhrmatMeKdlfY6b",
     scanReferenceId: uuidv4().toString().replace(/-/g, ''),
-    merchantCOE: "DE",
-    ledgerCurrency: "EUR",
+    merchantCOE: config.countryCode,
+    ledgerCurrency: config.currencyCode,
     storeLocation: {
-        countryCode: "DE"
+        countryCode: config.countryCode
     },
     metadata: {
         merchantNote: "Software Purchase",
@@ -66,7 +66,7 @@ describe('InStore Client Test Cases', (done) => {
             chargePermissionId: chargePermissionId,
             chargeReferenceId: uuidv4().toString().replace(/-/g, ''),
             chargeTotal: {
-                currencyCode: "EUR",
+                currencyCode: config.currencyCode,
                 amount: 2
             },
             softDescriptor: "amzn-store"
@@ -86,7 +86,7 @@ describe('InStore Client Test Cases', (done) => {
             chargeId: chargeId,
             refundReferenceId: uuidv4().toString().replace(/-/g, ''),
             refundTotal: {
-                currencyCode: "EUR",
+                currencyCode: config.currencyCode,
                 amount: 2
             },
             softDescriptor: "amzn-store"
