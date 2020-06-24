@@ -116,7 +116,7 @@ describe('WebStore Client Test Cases - Checkout Session APIs', () => {
         webStoreClient.getBuyer(buyerToken, headers).then(function (result) {
             assert.equal(result.statusCode, 200);
             var actualResponse = JSON.parse(result.body);
-            assert.equal(actualResponse.buyer.buyerId.startsWith('amzn1.account.'), true);
+            assert.equal(actualResponse.buyerId.startsWith('amzn1.account.'), true);
             done();
         }).catch(err => {
             done(err);

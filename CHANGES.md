@@ -1,3 +1,6 @@
+#### Version 2.1.1 - June 2020
+* Underlying endpoint for getBuyer API changed
+
 #### Version 2.1.0 - June 2020
 * Added getBuyer() API call
 
@@ -6,4 +9,3 @@
 
 #### Version 2.0.0 - April 2020
 * Initial release
-

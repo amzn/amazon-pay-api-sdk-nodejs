@@ -145,7 +145,7 @@ class WebStoreClient extends AmazonPayClient {
     getBuyer(buyerToken, headers = null) {
         return this.apiCall({
             method: 'GET',
-            urlFragment: `buyer/${buyerToken}`,
+            urlFragment: `buyers/${buyerToken}`,
             headers: headers
         });
     }
