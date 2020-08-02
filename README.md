@@ -28,7 +28,6 @@ In Windows 10 this can be done with ssh-keygen commands:
 
 ```
 ssh-keygen -t rsa -b 2048 -f private.pem
-ssh-keygen -f private.pem -e -m PKCS8 > public.pub
 ```
 
 In Linux or macOS this can be done using openssl commands:

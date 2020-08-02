@@ -5,6 +5,7 @@
   "main": "src/client.js",
   "directories": {},
   "dependencies": {
+    "amazonpay": "1.1.1",
     "request": "^2.88.0",
     "uuid": "^3.3.3"
   },
@@ -15,9 +16,14 @@
   "scripts": {
     "test": "mocha tst/ --timeout 15000"
   },
-  "author": {
-    "name": "Amazon Pay API SDK",
-    "email": "amazon-pay-sdk@amazon.com"
+  "author": "Amazon Pay API SDK <amazon-pay-sdk@amazon.com>",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amzn/amazon-pay-api-sdk-nodejs.git"
   },
-  "license": "Apache-2.0"
+  "bugs": {
+    "url": "https://github.com/amzn/amazon-pay-api-sdk-nodejs/issues"
+  },
+  "homepage": "https://github.com/amzn/amazon-pay-api-sdk-nodejs#readme"
 }

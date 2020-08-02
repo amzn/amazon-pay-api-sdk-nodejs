@@ -7,21 +7,21 @@ const assert = require('assert');
 const crypto = require('crypto');
 const fs = require('fs');
 
-const publicKey = ``; // Provide public key here to run the tests
+const publicKey = `AKIAJ6NSRTL43WXKJKAA`; // Provide public key here to run the tests
 const generateButtonSignaturePayloadObject = {
-    storeId: 'amzn1.application-oa2-client.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    storeId: 'amzn1.application-oa2-client.94bad969a384414a94033d9e93f9fdf8',
     webCheckoutDetails: {
         checkoutReviewReturnUrl: 'https://localhost/test/CheckoutReview.php',
         checkoutResultReturnUrl: 'https://localhost/test/CheckoutResult.php'
     }
 };
-const generateButtonSignaturePayloadString = '{"storeId":"amzn1.application-oa2-client.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx","webCheckoutDetails":{"checkoutReviewReturnUrl":"https://localhost/test/CheckoutReview.php","checkoutResultReturnUrl":"https://localhost/test/CheckoutResult.php"}}';
-const generateButtonSignaturePayloadEscapedString = '{"storeId\":\"amzn1.application-oa2-client.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\"webCheckoutDetails\":{\"checkoutReviewReturnUrl\":\"https:\/\/localhost\/test\/CheckoutReview.php\",\"checkoutResultReturnUrl\":\"https:\/\/localhost\/test\/CheckoutResult.php\"}}';
+const generateButtonSignaturePayloadString = '{"storeId":"amzn1.application-oa2-client.94bad969a384414a94033d9e93f9fdf8","webCheckoutDetails":{"checkoutReviewReturnUrl":"https://localhost/test/CheckoutReview.php","checkoutResultReturnUrl":"https://localhost/test/CheckoutResult.php"}}';
+const generateButtonSignaturePayloadEscapedString = '{"storeId\":\"amzn1.application-oa2-client.94bad969a384414a94033d9e93f9fdf8\",\"webCheckoutDetails\":{\"checkoutReviewReturnUrl\":\"https:\/\/localhost\/test\/CheckoutReview.php\",\"checkoutResultReturnUrl\":\"https:\/\/localhost\/test\/CheckoutResult.php\"}}';
 const expectedStringToSign = `AMZN-PAY-RSASSA-PSS
 8dec52d799607be40f82d5c8e7ecb6c171e6591c41b1111a576b16076c89381c`;
 
-const mwsAuthToken = ''; // Provide public key here to run the tests
-const merchantId = ''; // Provide merchantId
+const mwsAuthToken = 'AKIAJ6NSRTL43WXKJKAA'; // Provide public key here to run the tests
+const merchantId = 'A1WG6BGZRKB8IN'; // Provide merchantId
 
 function verify (signature) {
     var verifier = crypto.createVerify('RSA-SHA256').update(expectedStringToSign);
