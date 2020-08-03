@@ -5,7 +5,7 @@ const fs = require('fs');
 
 const configArgs = {
     'publicKeyId': 'AKIAJ6NSRTL43WXKJKAA', // Enter your Public Key ID
-    'privateKey': fs.readFileSync( 'XXXXXXXXX' ), // Path to your private key file
+    'privateKey': fs.readFileSync('AmazonPay_publicKeyId.pem'), // Path to your private key file'
     'region': 'US',
     'sandbox': true,
     'currencyCode': 'USD',
