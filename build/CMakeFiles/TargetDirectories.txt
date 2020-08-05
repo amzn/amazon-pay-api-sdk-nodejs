@@ -1,0 +1,9 @@
+C:/Users/edward/Desktop/AmazonPayDemo/react_redux_express_starter/client/amazon-pay-api-sdk-nodejs/build/CMakeFiles/NightlyMemoryCheck.dir
+C:/Users/edward/Desktop/AmazonPayDemo/react_redux_express_starter/client/amazon-pay-api-sdk-nodejs/build/CMakeFiles/Experimental.dir
+C:/Users/edward/Desktop/AmazonPayDemo/react_redux_express_starter/client/amazon-pay-api-sdk-nodejs/build/CMakeFiles/Continuous.dir
+C:/Users/edward/Desktop/AmazonPayDemo/react_redux_express_starter/client/amazon-pay-api-sdk-nodejs/build/CMakeFiles/Nightly.dir
+C:/Users/edward/Desktop/AmazonPayDemo/react_redux_express_starter/client/amazon-pay-api-sdk-nodejs/build/CMakeFiles/PACKAGE.dir
+C:/Users/edward/Desktop/AmazonPayDemo/react_redux_express_starter/client/amazon-pay-api-sdk-nodejs/build/CMakeFiles/l.dir
+C:/Users/edward/Desktop/AmazonPayDemo/react_redux_express_starter/client/amazon-pay-api-sdk-nodejs/build/CMakeFiles/RUN_TESTS.dir
+C:/Users/edward/Desktop/AmazonPayDemo/react_redux_express_starter/client/amazon-pay-api-sdk-nodejs/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/edward/Desktop/AmazonPayDemo/react_redux_express_starter/client/amazon-pay-api-sdk-nodejs/build/CMakeFiles/ZERO_CHECK.dir
