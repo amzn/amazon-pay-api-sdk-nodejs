@@ -1,4 +1,4 @@
-'use strict';
+"use strict"
 
 const fs = require('fs');
 // Please Update the below mentioned values before running test cases
