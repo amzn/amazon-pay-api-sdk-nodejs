@@ -4,7 +4,7 @@ const fs = require('fs');
 // Please Update the below mentioned values before running test cases
 
 const configArgs = {
-    'publicKeyId': 'AKIAJ6NSRTL43WXKJKAA', // Enter your Public Key ID
+    'publicKeyId': 'AGSQL22LHYAGJB367CTD2RHD", // Enter your Public Key ID
     'privateKey': fs.readFileSync('AmazonPay_publicKeyId.pem'), // Path to your private key file'
     'region': 'US',
     'sandbox': true,
