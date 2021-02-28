@@ -386,7 +386,7 @@ Example request method:
     const options = {
         method: 'POST',
         urlFragment: '${version}/in-store/merchantScan',
-        payload = {
+        payload: {
             scanData: 'UKhrmatMeKdlfY6b',
             scanReferenceId: '0b8fb271-2ae2-49a5-b35d4',
             merchantCOE: 'US',
