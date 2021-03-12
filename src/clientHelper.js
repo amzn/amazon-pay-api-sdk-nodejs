@@ -145,8 +145,8 @@ function signHeaders(configArgs, options) {
     const signedHeaders = lowercaseSortedHeaderKeys.join(';');
 
     let payload = options.payload;
-    if (payload === null || payload === undefined || options.urlFragment.includes(`/account-management/${constants.API_VERSION}/accounts`)) {
-        payload = ''; // do not sign payload for payment critical data APIs
+    if (payload === null || payload === undefined) {
+        payload = ''; 
     }
 
     let canonicalRequest = options.method + '\n/'
