@@ -2,7 +2,7 @@
 
 const constants = require('./constants');
 const crypto = require('crypto');
-const request = require('request');
+const axios = require('axios');
 
 module.exports = {
     signHeaders: signHeaders,
@@ -33,7 +33,7 @@ function invokeApi(configArgs, apiOptions) {
         json: false,
         headers: apiOptions.headers,
         url: `https://${getAPIEndpointBaseURL(configArgs)}/${apiOptions.urlFragment}${getQueryString(apiOptions.queryParams)}`,
-        body: apiOptions.payload
+        data: apiOptions.payload
     };
 
     const response = this.retryLogic(options, 1);
@@ -108,14 +108,14 @@ function sendRequest(options, count) {
 
     return new Promise(function (resolve, reject) {
         setTimeout(function () {
-            request(options, function (err, response, body) {
-                if (err) {
-                    reject(err);
-                } else if (response.statusCode >= 400) {
+            axios.request(options).then(response => {
+                if (response.status >= 400) {
                     reject(response);
                 } else {
                     resolve(response);
                 }
+            }).catch(error => {
+                reject(error);
             });
         }, delayTime);
     });

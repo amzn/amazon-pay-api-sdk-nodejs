@@ -64,7 +64,7 @@ describe('AmazonPay Client Test Cases - Get Authorization Token', () => {
         const amazonPayCLient = new Client.AmazonPayClient(configCopy);
         amazonPayCLient.getAuthorizationToken(mwsAuthToken, merchantId)
         .then(function (result) {
-            var actualResponse = JSON.parse(result.body);
+            var actualResponse = result.data;
             assert.ok(actualResponse.authorizationToken);
             done();
         })

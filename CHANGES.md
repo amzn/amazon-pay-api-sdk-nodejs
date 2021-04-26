@@ -1,3 +1,7 @@
+#### Version 2.1.3 - April 2021
+* Removed deprecated library 'request' which is used to make HTTP/HTTPS calls
+* Added library 'axios' to make HTTP/HTTPS calls
+
 #### Version 2.1.2 - March 2021
 * Removing deprecated API calls
 

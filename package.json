@@ -1,11 +1,11 @@
 {
   "name": "@amazonpay/amazon-pay-api-sdk-nodejs",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Amazon Pay Checkout V2 Integration",
   "main": "src/client.js",
   "directories": {},
   "dependencies": {
-    "request": "^2.88.0",
+    "axios": "^0.21.1",
     "uuid": "^3.3.3"
   },
   "devDependencies": {

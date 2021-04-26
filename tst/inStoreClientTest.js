@@ -52,9 +52,9 @@ describe('InStore Client Test Cases', (done) => {
 
     it('Validating Merchant Scan API', (done) => {
         inStoreClient.merchantScan(merchantScanPayload).then(function (result) {
-            var actualResponse = JSON.parse(result.body);
+            var actualResponse = result.data;
             chargePermissionId = actualResponse.chargePermissionId;
-            assert.deepEqual(Object.keys(merchantScanExpectedResponse), Object.keys(actualResponse));
+            assert.deepStrictEqual(Object.keys(merchantScanExpectedResponse), Object.keys(actualResponse));
             done();
         }).catch(err => {
             done(err);
@@ -72,9 +72,9 @@ describe('InStore Client Test Cases', (done) => {
             softDescriptor: "amzn-store"
         }
         inStoreClient.charge(chargePayload).then(function (result) {
-            var actualResponse = JSON.parse(result.body);
+            var actualResponse = result.data;
             chargeId = actualResponse.chargeId;
-            assert.deepEqual(Object.keys(chargeExpectedResponse), Object.keys(actualResponse));
+            assert.deepStrictEqual(Object.keys(chargeExpectedResponse), Object.keys(actualResponse));
             done();
         }).catch(err => {
             done(err);
@@ -92,8 +92,8 @@ describe('InStore Client Test Cases', (done) => {
             softDescriptor: "amzn-store"
         }
         inStoreClient.refund(refundPayload).then(function (result) {
-            var actualResponse = JSON.parse(result.body);
-            assert.deepEqual(Object.keys(refundExpectedResponse), Object.keys(actualResponse));
+            var actualResponse = result.data;
+            assert.deepStrictEqual(Object.keys(refundExpectedResponse), Object.keys(actualResponse));
             done();
         }).catch(err => {
             done(err);

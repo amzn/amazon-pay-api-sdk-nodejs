@@ -93,6 +93,8 @@ describe('WebStore Client Test Cases - Checkout Session APIs', () => {
         webCheckoutDetails: '',
         productType: '',
         paymentDetails: '',
+        chargePermissionType: '',
+        recurringMetadata: '',
         merchantMetadata: '',
         supplementaryData: '',
         buyer: '',
@@ -114,9 +116,9 @@ describe('WebStore Client Test Cases - Checkout Session APIs', () => {
 
     it('Validating Get Buyer API', (done) => {
         webStoreClient.getBuyer(buyerToken, headers).then(function (result) {
-            assert.equal(result.statusCode, 200);
-            var actualResponse = JSON.parse(result.body);
-            assert.equal(actualResponse.buyerId.startsWith('amzn1.account.'), true);
+            assert.strictEqual(result.status, 200);
+            var actualResponse = result.data;
+            assert.deepStrictEqual(actualResponse.buyerId.startsWith('amzn1.account.'), true);
             done();
         }).catch(err => {
             done(err);
@@ -125,10 +127,10 @@ describe('WebStore Client Test Cases - Checkout Session APIs', () => {
 
     it('Validating Create Checkout Session API', (done) => {
         webStoreClient.createCheckoutSession(createCheckoutSessionPayload, headers).then(function (result) {
-            assert.equal(result.statusCode, 201);
-            var actualResponse = JSON.parse(result.body);
+            assert.strictEqual(result.status, 201);
+            var actualResponse = result.data;
             checkoutSessionId = actualResponse.checkoutSessionId;
-            //TODO: assert.deepEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
             done();
         }).catch(err => {
             done(err);
@@ -137,9 +139,9 @@ describe('WebStore Client Test Cases - Checkout Session APIs', () => {
 
     it('Validating Get Checkout Session API', (done) => {
         webStoreClient.getCheckoutSession(checkoutSessionId, headers).then(function (result) {
-            assert.equal(result.statusCode, 200);
-            var actualResponse = JSON.parse(result.body);
-            //TODO: assert.deepEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+            assert.strictEqual(result.status, 200);
+            var actualResponse = result.data;
+            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
             done();
         }).catch(err => {
             done(err);
@@ -148,9 +150,9 @@ describe('WebStore Client Test Cases - Checkout Session APIs', () => {
 
     it('Validating Update Checkout Session API', (done) => {
         webStoreClient.updateCheckoutSession(checkoutSessionId, updateCheckoutSessionPayload).then(function (result) {
-            assert.equal(result.statusCode, 200);
-            var actualResponse = JSON.parse(result.body);
-            //TODO: assert.deepEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+            assert.strictEqual(result.status, 200);
+            var actualResponse = result.data;
+            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
             done();
         }).catch(err => {
             done(err);
@@ -160,9 +162,9 @@ describe('WebStore Client Test Cases - Checkout Session APIs', () => {
     // Can only run this after visiting amazonPayRedirectUrl
     it.skip('Validating Complete Checkout Session API', (done) => {
         webStoreClient.completeCheckoutSession(checkoutSessionId, completeCheckoutSessionPayload).then(function (result) {
-            assert.equal(result.statusCode, 200);
-            var actualResponse = JSON.parse(result.body);
-            //TODO: assert.deepEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+            assert.strictEqual(result.status, 200);
+            var actualResponse = result.data;
+            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
             done();
         }).catch(err => {
             done(err);
@@ -195,14 +197,16 @@ describe('', () => {
             merchantMetadata: '',
             releaseEnvironment: '',
             limits: '',
+            chargePermissionType: '',
+            recurringMetadata: '',
             presentmentCurrency: ''
         };
 
         it('Validating Get Charge Permission API', (done) => {
             webStoreClient.getChargePermission(chargePermissionId, headers).then(function (result) {
-                assert.equal(result.statusCode, 200);
-                var actualResponse = JSON.parse(result.body);
-                //TODO: assert.deepEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+                assert.strictEqual(result.status, 200);
+                var actualResponse = result.data;
+                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
                 done();
             }).catch(err => {
                 done(err);
@@ -211,9 +215,9 @@ describe('', () => {
 
         it('Validating Update Charge Permission API', (done) => {
             webStoreClient.updateChargePermission(chargePermissionId, updateChargePermissionPayload, headers).then(function (result) {
-                assert.equal(result.statusCode, 200);
-                var actualResponse = JSON.parse(result.body);
-                //TODO: assert.deepEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+                assert.strictEqual(result.status, 200);
+                var actualResponse = result.data;
+                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
                 done();
             }).catch(err => {
                 done(err);
@@ -223,9 +227,9 @@ describe('', () => {
         // Cannot Create Charge if Close Charge Permission is executed, unskip this test case and skip Charge API Tests to validate this API 
         it.skip('Validating Close Charge Permission API', (done) => {
             webStoreClient.closeChargePermission(chargePermissionId, closeChargePermissionPayload, headers).then(function (result) {
-                assert.equal(result.statusCode, 200);
-                var actualResponse = JSON.parse(result.body);
-                //TODO: assert.deepEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+                assert.strictEqual(result.status, 200);
+                var actualResponse = result.data;
+                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
                 done();
             }).catch(err => {
                 done(err);
@@ -243,10 +247,13 @@ describe('', () => {
             refundedAmount: '',
             softDescriptor: '',
             providerMetadata: '',
+            convertedAmount: '',
+            conversionRate: '',
             statusDetails: '',
             creationTimestamp: '',
             expirationTimestamp: '',
-            releaseEnvironment: ''
+            releaseEnvironment: '',
+            merchantMetadata: ''
         };
 
         before(function () {
@@ -258,10 +265,10 @@ describe('', () => {
 
         it('Validating Create Charge API', (done) => {
             webStoreClient.createCharge(createChargePayload, headers).then(function (result) {
-                assert.equal(result.statusCode, 201);
-                var actualResponse = JSON.parse(result.body);
+                assert.strictEqual(result.status, 201);
+                var actualResponse = result.data;
                 chargeId = actualResponse.chargeId;
-                //TODO: assert.deepEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
                 done();
             }).catch(err => {
                 done(err);
@@ -270,9 +277,9 @@ describe('', () => {
 
         it('Validating Get Charge API', (done) => {
             webStoreClient.getCharge(chargeId, headers).then(function (result) {
-                assert.equal(result.statusCode, 200);
-                var actualResponse = JSON.parse(result.body);
-                //TODO: assert.deepEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+                assert.strictEqual(result.status, 200);
+                var actualResponse = result.data;
+                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
                 done();
             }).catch(err => {
                 done(err);
@@ -283,9 +290,9 @@ describe('', () => {
             webStoreClient.captureCharge(chargeId, captureChargePayload, {
                 'x-amz-pay-idempotency-key': uuidv4().toString().replace(/-/g, '')
             }).then(function (result) {
-                assert.equal(result.statusCode, 200);
-                var actualResponse = JSON.parse(result.body);
-                //TODO: assert.deepEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+                assert.strictEqual(result.status, 200);
+                var actualResponse = result.data;
+                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
                 done();
             }).catch(err => {
                 done(err);
@@ -295,9 +302,9 @@ describe('', () => {
         // Cannot Run both Capture charge and Cancel charge at same time, Run either Capture Capture or Cancel Charge
         it.skip('Validating Cancel Charge API', (done) => {
             webStoreClient.cancelCharge(chargeId, cancelChargePayload, headers).then(function (result) {
-                assert.equal(result.statusCode, 200);
-                var actualResponse = JSON.parse(result.body);
-                //TODO: assert.deepEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+                assert.strictEqual(result.status, 200);
+                var actualResponse = result.data;
+                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
                 done();
             }).catch(err => {
                 done(err);
@@ -338,10 +345,10 @@ describe('', () => {
                 softDescriptor: 'SOFT_DESCRIPTOR'
             };
             webStoreClient.createRefund(refundpaylod, headers).then(function (result) {
-                assert.equal(result.statusCode, 201);
-                var actualResponse = JSON.parse(result.body);
+                assert.strictEqual(result.status, 201);
+                var actualResponse = result.data;
                 refundId = actualResponse.refundId;
-                //TODO: assert.deepEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
                 done();
             }).catch(err => {
                 done(err);
@@ -350,9 +357,9 @@ describe('', () => {
 
         it('Validating Get Refund API', (done) => {
             webStoreClient.getRefund(refundId, headers).then(function (result) {
-                assert.equal(result.statusCode, 200);
-                var actualResponse = JSON.parse(result.body);
-                //TODO: assert.deepEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+                assert.strictEqual(result.status, 200);
+                var actualResponse = result.data;
+                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
                 done();
             }).catch(err => {
                 done(err);
