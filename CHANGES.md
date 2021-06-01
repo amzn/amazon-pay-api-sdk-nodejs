@@ -1,3 +1,6 @@
+#### Version 2.1.4 - May 2021
+* Enabled support for environment specific keys (i.e Public key & Private key). The changes are fully backwards-compatible, where merchants can also use non environment specific keys
+
 #### Version 2.1.3 - April 2021
 * Removed deprecated library 'request' which is used to make HTTP/HTTPS calls
 * Added library 'axios' to make HTTP/HTTPS calls

@@ -55,6 +55,17 @@ To associate the key with your account, follow the instructions here to
     };
 ```
 
+If you have created environment specific keys (i.e Public Key Starts with LIVE or SANDBOX) in Seller Central, then use those PublicKeyId & PrivateKey. In this case, there is no need to pass the Sandbox parameter to the ApiConfiguration.
+
+``` js
+    const fs = require('fs');
+    const config = {
+        'publicKeyId': 'PUBLIC_KEY_ID',                   // LIVE-XXXXX or SANDBOX-XXXXX
+        'privateKey': fs.readFileSync('tst/private.pem'), // Path to RSA Private Key (or a string representation)
+        'region': 'us',                                   // Must be one of: 'us', 'eu', 'jp' 
+    };
+```
+
 # Versioning
 The pay-api.amazon.com|eu|jp endpoint uses versioning to allow future updates. The major version of this SDK will stay aligned with the API version of the endpoint.
 

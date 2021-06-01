@@ -63,13 +63,22 @@ function prepareOptions(configArgs, options) {
     if (!(typeof options.payload === 'string' || options.payload instanceof String)) {
         options.payload = JSON.stringify(options.payload);
     }
-
-    if (configArgs['sandbox'] === true || configArgs['sandbox'] === 'true') {
-        options.urlFragment = `sandbox/${constants.API_VERSION}/${options.urlFragment}`;
+    // Condition to validate PublicKeyId is Environment specific
+    if (isEnvSpecificPublicKeyId(configArgs['publicKeyId'])) {
+        options.urlFragment = `${constants.API_VERSION}/${options.urlFragment}`;
     } else {
-        options.urlFragment = `live/${constants.API_VERSION}/${options.urlFragment}`;
+        if (configArgs['sandbox'] === true || configArgs['sandbox'] === 'true') {
+            options.urlFragment = `sandbox/${constants.API_VERSION}/${options.urlFragment}`;
+        } else {
+            options.urlFragment = `live/${constants.API_VERSION}/${options.urlFragment}`;
+        }
     }
     return options;
+}
+
+// Method used to validate whether PublicKeyId starts with prefix LIVE or SANDBOX
+function isEnvSpecificPublicKeyId(publicKeyId) {
+    return publicKeyId.toUpperCase().startsWith('LIVE') || publicKeyId.toUpperCase().startsWith('SANDBOX')
 }
 
 function sign(privateKey, stringToSign) {
