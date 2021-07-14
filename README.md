@@ -210,7 +210,9 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
     };
 
     const testPayClient = new Client.AmazonPayClient(config);
-    const response = testPayClient.deliveryTrackers(payload);
+    testPayClient.deliveryTrackers(payload).then((apiResponse) => {
+        const response = apiResponse;
+    });
 ```
 
 ## Checkout v2 - Create Checkout Session
@@ -239,7 +241,9 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
     };
 
     const testPayClient = new Client.WebStoreClient(config);
-    const response = testPayClient.createCheckoutSession(payload, headers);
+    testPayClient.createCheckoutSession(payload, headers).then((apiResponse) => {
+        const response = apiResponse;
+    });
 ```
 
 ## Checkout v2 - Get Checkout Session
@@ -262,7 +266,9 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 
     const checkoutSessionId = 00000000-0000-0000-0000-000000000000;
     const testPayClient = new Client.WebStoreClient(config);
-    const response = testPayClient.getCheckoutSession(checkoutSessionId, headers);
+    testPayClient.getCheckoutSession(checkoutSessionId, headers).then((apiResponse) => {
+        const response = apiResponse;
+    });
 ```
 
 ## Checkout v2 - Update Checkout Session
@@ -301,7 +307,9 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 
     const checkoutSessionId = 00000000-0000-0000-0000-000000000000;
     const testPayClient = new Client.WebStoreClient(config);
-    const response = testPayClient.updateCheckoutSession(checkoutSessionId, payload);
+    testPayClient.updateCheckoutSession(checkoutSessionId, payload).then((apiResponse) => {
+        const response = apiResponse;
+    });
 ```
 
 ## Checkout v2 - Capture Charge
@@ -331,7 +339,9 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 
     const chargeId = 'S01-0000000-0000000-C000000';
     const testPayClient = new Client.WebStoreClient(config);
-    const response = testPayClient.captureCharge(chargeId, payload, headers);
+    testPayClient.captureCharge(chargeId, payload, headers).then((apiResponse) => {
+        const response = apiResponse;
+    });
 ```
 
 ## In Store MerchantScan
@@ -345,7 +355,7 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
     };
 
     testInStoreClient.merchantScan(payload).then(function (response) {
-        const merchantScanChargePermissionId = JSON.parse(response.body).chargePermissionId;
+        const merchantScanChargePermissionId = response.data.chargePermissionId;
     });
 ```
 
@@ -421,7 +431,9 @@ Example request method:
     };
 
     const client = new Client.InStoreClient(config);
-    const signedHeders = client.apiCall(options);
+    client.apiCall(options).then((apiResponse) => {
+        const signedHeders = apiResponse;
+    });
 ```
 
 Example call to getSignedHeaders function with values:
