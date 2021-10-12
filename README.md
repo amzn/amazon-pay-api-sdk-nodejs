@@ -3,8 +3,6 @@ Amazon Pay Checkout v2 Integration
 
 Please note the Amazon Pay API SDK can only be used for API calls to the pay-api.amazon.com|eu|jp endpoint.
 
-If you need to make an Amazon Pay API call that uses the mws.amazonservices.com|jp or mws-eu.amazonservices.com endpoint, then you will need to use the original [Amazon Pay SDK (Node.js)](https://github.com/amzn/amazon-pay-sdk-nodejs).
-
 ## Requirements
 
 * Amazon Pay account: To register for Amazon Pay, go to https://pay.amazon.com, choose your region by selecting the flag icon in the upper right corner, and then click "Register".

@@ -1,3 +1,7 @@
+#### Version 2.1.5 - October 2021
+* Fixed Security Vulnerabilities by upgrading 'axios' library version
+* ReadMe file updates
+
 #### Version 2.1.4 - May 2021
 * Enabled support for environment specific keys (i.e Public key & Private key). The changes are fully backwards-compatible, where merchants can also use non environment specific keys
 
