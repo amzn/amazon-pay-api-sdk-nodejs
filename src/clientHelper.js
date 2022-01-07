@@ -86,7 +86,7 @@ function sign(privateKey, stringToSign) {
     return sign.sign({
         key: privateKey,
         padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-        saltLength: 20
+        saltLength: 32
     }, 'base64');
 }
 
@@ -141,7 +141,7 @@ function signHeaders(configArgs, options) {
 
     Object.assign(headers, options.headers);
 
-    headers['x-amz-pay-region'] = configArgs.region;
+    headers['x-amz-pay-region'] = constants.REGION_MAP[configArgs.region.toLowerCase()];
     headers['x-amz-pay-host'] =  getAPIEndpointBaseURL(configArgs);
     headers['x-amz-pay-date'] = getTimestamp();
     headers['content-type'] =  'application/json';

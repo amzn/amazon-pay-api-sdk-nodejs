@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    SDK_VERSION: '2.1.5',
+    SDK_VERSION: '2.2.0',
     API_VERSION: 'v2',
     RETRIES: 3,
     API_ENDPOINTS: {
@@ -17,5 +17,5 @@ module.exports = {
         eu: 'eu',
         jp: 'jp'
     },
-    AMAZON_SIGNATURE_ALGORITHM: 'AMZN-PAY-RSASSA-PSS'
+    AMAZON_SIGNATURE_ALGORITHM: 'AMZN-PAY-RSASSA-PSS-V2'
 };
