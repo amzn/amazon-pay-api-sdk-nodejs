@@ -1,3 +1,7 @@
+#### Version 2.2.1 - January 2022
+* Applied patch to address issues occurred in Version 2.2.0.
+**Please dont use Version 2.2.0**
+
 #### Version 2.2.0 - January 2022
 * Migrated signature generating algorithm from AMZN-PAY-RSASSA-PSS to AMZN-PAY-RSASSA-PSS-V2 & increased salt length from 20 to 32
 * Note : From this SDK version, "algorithm" need to be provided as additional field in "createCheckoutSessionConfig" while rendering Amazon Pay button.

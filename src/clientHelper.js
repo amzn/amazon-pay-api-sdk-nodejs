@@ -86,7 +86,7 @@ function sign(privateKey, stringToSign) {
     return sign.sign({
         key: privateKey,
         padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-        saltLength: 32
+        saltLength: 20
     }, 'base64');
 }
 
