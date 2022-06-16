@@ -1,3 +1,6 @@
+#### Version 2.2.2 - June 2022
+* Fixed security vulnerabilities in dependencies.
+
 #### Version 2.2.1 - January 2022
 * Applied patch to address issues occurred in Version 2.2.0.
 **Please dont use Version 2.2.0**
