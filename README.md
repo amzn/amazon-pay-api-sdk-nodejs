@@ -49,7 +49,8 @@ To associate the key with your account, follow the instructions here to
         'publicKeyId': 'ABC123DEF456XYZ',                 // RSA Public Key ID (this is not the Merchant or Seller ID)
         'privateKey': fs.readFileSync('tst/private.pem'), // Path to RSA Private Key (or a string representation)
         'region': 'us',                                   // Must be one of: 'us', 'eu', 'jp' 
-        'sandbox': true                                   // true (Sandbox) or false (Production) boolean
+        'sandbox': true,                                   // true (Sandbox) or false (Production) boolean
+        'algorithm': 'AMZN-PAY-RSASSA-PSS-V2'             // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
 ```
 
@@ -61,6 +62,7 @@ If you have created environment specific keys (i.e Public Key Starts with LIVE o
         'publicKeyId': 'PUBLIC_KEY_ID',                   // LIVE-XXXXX or SANDBOX-XXXXX
         'privateKey': fs.readFileSync('tst/private.pem'), // Path to RSA Private Key (or a string representation)
         'region': 'us',                                   // Must be one of: 'us', 'eu', 'jp' 
+        'algorithm': 'AMZN-PAY-RSASSA-PSS-V2'             // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
 ```
 
@@ -196,7 +198,8 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
         publicKeyId: 'ABC123DEF456XYZ',
         privateKey: fs.readFileSync('tst/private.pem'),
         region: 'us',
-        sandbox: true
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified 
     };
 
     const payload = {
@@ -224,7 +227,8 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
         publicKeyId: 'ABC123DEF456XYZ',
         privateKey: fs.readFileSync('tst/private.pem'),
         region: 'us',
-        sandbox: true
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
 
     const payload = {
@@ -255,7 +259,8 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
         publicKeyId: 'ABC123DEF456XYZ',
         privateKey: fs.readFileSync('tst/private.pem'),
         region: 'us',
-        sandbox: true
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
 
     const headers = {
@@ -280,7 +285,8 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
         publicKeyId: 'ABC123DEF456XYZ',
         privateKey: fs.readFileSync('tst/private.pem'),
         region: 'us',
-        sandbox: true
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
 
     const payload = {
@@ -321,7 +327,8 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
         publicKeyId: 'ABC123DEF456XYZ',
         privateKey: fs.readFileSync('tst/private.pem'),
         region: 'us',
-        sandbox: true
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
 
     const payload = {
@@ -371,7 +378,8 @@ Example call to generateButtonSignature function:
         publicKeyId: 'ABC123DEF456XYZ',
         privateKey: fs.readFileSync('tst/private.pem'),
         region: 'us',
-        sandbox: true
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
 
     const testPayClient = new Client.AmazonPayClient(config);
@@ -453,7 +461,7 @@ Example request method:
     const options = {
         method: 'POST',
         urlFragment: '${version}/in-store/merchantScan',
-        payload = {
+        payload: {
             scanData: 'UKhrmatMeKdlfY6b',
             scanReferenceId: '0b8fb271-2ae2-49a5-b35d4',
             merchantCOE: 'US',
@@ -483,4 +491,209 @@ Example request method:
 
     const client = new Client.AmazonPayClient(config);
     const signedHeaders = client.getSignedHeaders(options);
+```
+
+# Reporting APIs code samples
+
+## Amazon Checkout v2 Reporting APIs - GetReport API
+```js
+    const fs = require('fs');
+    const uuidv4 = require('uuid/v4');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'us',
+        sandbox: false,
+    };
+
+    const testPayClient = new Client.WebStoreClient(config);
+    const requestPayload = {
+        reportTypes: "_GET_FLAT_FILE_OFFAMAZONPAYMENTS_SETTLEMENT_DATA_",
+    };
+    const response = testPayClient.getReports(requestPayload);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Amazon Checkout v2 Reporting APIs - GetReportById API
+```js
+    const fs = require('fs');
+    const uuidv4 = require('uuid/v4');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'us',
+        sandbox: false,
+    };
+
+    const reportId = '1234567890';
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.getReportById(reportId);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Amazon Checkout v2 Reporting APIs - GetReportDocument API
+```js
+    const fs = require('fs');
+    const uuidv4 = require('uuid/v4');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'us',
+        sandbox: false,
+    };
+
+    const reportDocumentId = '1234567890';
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.getReportDocument(reportDocumentId);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Amazon Checkout v2 Reporting APIs - GetReportSchedules API
+```js
+    const fs = require('fs');
+    const uuidv4 = require('uuid/v4');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'us',
+        sandbox: false,
+    };
+
+    const reportTypes = '_GET_FLAT_FILE_OFFAMAZONPAYMENTS_ORDER_REFERENCE_DATA_,_GET_FLAT_FILE_OFFAMAZONPAYMENTS_BILLING_AGREEMENT_DATA_';
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.getReportSchedules(reportTypes);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Amazon Checkout v2 Reporting APIs - GetReportScheduleById API
+```js
+    const fs = require('fs');
+    const uuidv4 = require('uuid/v4');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'us',
+        sandbox: false,
+    };
+
+    const reportScheduleId = '1234567890';
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.getReportScheduleById(reportScheduleId);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Amazon Checkout v2 Reporting APIs - CreateReport API
+```js
+    const fs = require('fs');
+    const uuidv4 = require('uuid/v4');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'us',
+        sandbox: false,
+    };
+
+    const requestPayload = {
+        reportType: '_GET_FLAT_FILE_OFFAMAZONPAYMENTS_AUTHORIZATION_DATA_',
+        startTime: '20221114T074550Z',
+        endTime: '20221114T074550Z'
+    }
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.createReport(requestPayload);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Amazon Checkout v2 Reporting APIs - CreateReportSchedule API
+```js
+    const fs = require('fs');
+    const uuidv4 = require('uuid/v4');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'us',
+        sandbox: false,
+    };
+
+    const requestPayload = {
+        reportType: "_GET_FLAT_FILE_OFFAMAZONPAYMENTS_ORDER_REFERENCE_DATA_",
+        scheduleFrequency: "P1D",
+        nextReportCreationTime: "20230317T074550Z",
+        deleteExistingSchedule: false
+    }
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.createReportSchedule(requestPayload);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Amazon Checkout v2 Reporting APIs - CancelReportSchedule API
+```js
+    const fs = require('fs');
+    const uuidv4 = require('uuid/v4');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'us',
+        sandbox: false,
+    };
+
+    const reportScheduleId = "1234567890";
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.cancelReportSchedule(reportScheduleId);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
 ```

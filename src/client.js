@@ -171,12 +171,14 @@ class WebStoreClient extends AmazonPayClient {
      * @param {String} checkoutSessionId - The checkout session Id
      * @param {Object} [headers=null] - The headers for the request
      **/
-    getCheckoutSession(checkoutSessionId, headers = null) {
-        return this.apiCall({
+    async getCheckoutSession(checkoutSessionId, headers = null) {
+        const response = await this.apiCall({
             method: 'GET',
             urlFragment: `checkoutSessions/${checkoutSessionId}`,
             headers: headers
         });
+
+        return helper.enhanceResponseWithShippingAddressList(response);
     }
 
     /** API to update the CheckoutSession object
@@ -186,13 +188,15 @@ class WebStoreClient extends AmazonPayClient {
      * @param {Object} payload - The payload for the request
      * @param {Object} [headers=null] - The headers for the request
      **/
-    updateCheckoutSession(checkoutSessionId, payload, headers = null) {
-        return this.apiCall({
+    async updateCheckoutSession(checkoutSessionId, payload, headers = null) {
+        const response = await this.apiCall({
             method: 'PATCH',
             urlFragment: `checkoutSessions/${checkoutSessionId}`,
             payload: payload,
             headers: headers
         });
+
+        return helper.enhanceResponseWithShippingAddressList(response);
     }
 
     /** API to complete a Checkout Session
@@ -202,13 +206,15 @@ class WebStoreClient extends AmazonPayClient {
      * @param {Object} payload - The payload for the request
      * @param {Object} [headers=null] - The headers for the request
      **/
-    completeCheckoutSession(checkoutSessionId, payload, headers = null) {
-        return this.apiCall({
+    async completeCheckoutSession(checkoutSessionId, payload, headers = null) {
+        const response = await this.apiCall({
             method: 'POST',
             urlFragment: `checkoutSessions/${checkoutSessionId}/complete`,
             payload: payload,
             headers: headers
         });
+
+        return helper.enhanceResponseWithShippingAddressList(response);
     }
 
     /** API to get a ChargePermission object
@@ -309,7 +315,7 @@ class WebStoreClient extends AmazonPayClient {
      * @param {Object} payload - The payload for the request
      * @param {Object} [headers=null] - The headers for the request
      **/
-    cancelCharge(chargeId, payload, headers = null) { 
+    cancelCharge(chargeId, payload, headers = null) {
         return this.apiCall({
             method: 'DELETE',
             urlFragment: `charges/${chargeId}/cancel`,
@@ -346,6 +352,145 @@ class WebStoreClient extends AmazonPayClient {
             headers: headers
         });
     }
+
+
+    // ----------------------------------- CV2 REPORTING APIS -----------------------------------
+
+
+    /** API to get Reports
+     *   - retrieves details for the reports that match the filters that you specify.
+     * @see https://developer.amazon.com/docs/amazon-pay-api-v2/reports.html#get-reports
+     * @param {Object} [queryParameters=null] - The queryParameters for the request
+     * @param {Object} [headers=null] - The headers for the request
+    **/
+   getReports(queryParameters = null, headers = null) {
+        const {reportTypes, processingStatuses } = queryParameters;
+        if(Array.isArray(reportTypes)){
+            queryParameters.reportTypes = reportTypes.toString();
+        }
+        if(Array.isArray(processingStatuses)){
+            queryParameters.processingStatuses = processingStatuses.toString();
+        }
+        return this.apiCall({
+            method: 'GET',
+            urlFragment: `reports`,
+            headers: headers,
+            queryParams: queryParameters
+        });
+   }
+
+
+    /** API to get Report by Id
+     *   - retrieves report details for the given reportId.
+     * @see https://developer.amazon.com/docs/amazon-pay-api-v2/reports.html#get-report-by-id
+     * @param {String} reportId - The Report Id
+     * @param {Object} [headers=null] - The headers for the request
+    **/
+    getReportById(reportId, headers = null) {
+        return this.apiCall({
+            method: 'GET',
+            urlFragment: `reports/${reportId}`,
+            headers: headers
+        });
+    }
+
+
+    /** API to get Report Document
+    *   - returns the pre-signed S3 URL for the report. The report can be downloaded using this URL.
+    * @see https://developer.amazon.com/docs/amazon-pay-api-v2/reports.html#get-report-document
+    * @param {String} reportDocumentId - The Report Id
+    * @param {Object} [headers=null] - The headers for the request
+    **/
+    getReportDocument(reportDocumentId, headers = null) {
+        return this.apiCall({
+            method: 'GET',
+            urlFragment: `report-documents/${reportDocumentId}`,
+            headers: headers
+        });
+    }
+
+
+    /** API to get Report Schedules
+    *   - returns report schedule details that match the filters criteria specified.
+    * @see https://developer.amazon.com/docs/amazon-pay-api-v2/reports.html#get-report-schedules
+    * @param {String} [reportTypes=null] - The Report Id
+    * @param {Object} [headers=null] - The headers for the request
+    **/
+     getReportSchedules(reportTypes = null, headers = null) {
+        const queryParameters = {
+            'reportTypes': Array.isArray(reportTypes) ? reportTypes.toString() : reportTypes
+        };
+        return this.apiCall({
+            method: 'GET',
+            urlFragment: `report-schedules`,
+            headers: headers,
+            queryParams: reportTypes ? queryParameters : reportTypes
+        });
+    }    
+
+
+    /** API to get Report Schedule by Id
+    *   - returns the report schedule details that match the given ID.
+    * @see https://developer.amazon.com/docs/amazon-pay-api-v2/reports.html#get-report-schedule-by-id
+    * @param {String} reportScheduleId - The Report Schedule Id
+    * @param {Object} [headers=null] - The headers for the request
+    **/
+    getReportScheduleById(reportScheduleId, headers = null) {
+        return this.apiCall({
+            method: 'GET',
+            urlFragment: `report-schedules/${reportScheduleId}`,
+            headers: headers
+        });
+    }    
+
+
+    /** API to create Report
+    *   - submits a request to generate a report based on the reportType and date range specified.
+    * @see https://developer.amazon.com/docs/amazon-pay-api-v2/reports.html#create-report
+    * @param {Object} requestPayload - The payload for the request
+    * @param {Object} headers - The headers for the request
+    **/
+     createReport(requestPayload, headers) {
+        return this.apiCall({
+            method: 'POST',
+            urlFragment: `reports`,
+            payload: requestPayload,
+            headers: headers
+        });
+    } 
+
+
+    /** API to create Report Schedule
+    *   - creates a report schedule for the given reportType. Only one schedule per report type allowed.
+    * @see https://developer.amazon.com/docs/amazon-pay-api-v2/reports.html#create-report-schedules
+    * @param {Object} requestPayload - The payload for the request
+    * @param {Object} headers - The headers for the request
+    **/
+     createReportSchedule(requestPayload, headers) {
+        return this.apiCall({
+            method: 'POST',
+            urlFragment: `report-schedules`,
+            payload: requestPayload,
+            headers: headers
+        });
+    }     
+
+
+    /** API to cancel Report Schedule
+    *   - cancels the report schedule with the given reportScheduleId.
+    * @see https://developer.amazon.com/docs/amazon-pay-api-v2/reports.html#cancel-report-schedule
+    * @param {String} reportScheduleId - The Report Schedule Id
+    * @param {Object} [headers=null] - The headers for the request
+    **/
+     cancelReportSchedule(reportScheduleId, headers = null) {
+        return this.apiCall({
+            method: 'DELETE',
+            urlFragment: `report-schedules/${reportScheduleId}`,
+            headers: headers
+        });
+    }     
+
+    
 }
 
 module.exports = {
