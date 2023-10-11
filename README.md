@@ -130,6 +130,14 @@ Please contact your Amazon Pay Account Manager before using the In-Store API cal
 * **instoreCharge**(payload, headers = null) &#8594; POST to `${version}/in-store/charge`
 * **instoreRefund**(payload, headers = null) &#8594; POST to `${version}/in-store/refund`
 
+### Amazon Checkout v2 SPC
+* **finalizeCheckoutSession**(checkoutSessionId, payload, headers = null) &#8594; POST to `${version}/checkoutSessions/${checkoutSessionId}/finalize`
+
+### Amazon Checkout v2 Merchant Onboarding & Account Management object
+* **registerAmazonPayAccount**(payload, headers = null) &#8594; POST to `${version}/merchantAccounts`
+* **updateAmazonPayAccount**(merchantAccountId, payload, headers = null) &#8594; PATCH to `${version}/merchantAccounts/${merchantAccountId}`
+* **deleteAmazonPayAccount**(merchantAccountId, headers = null) &#8594; DELETE to `${version}/merchantAccounts/${merchantAccountId}`
+
 # Using Convenience Functions
 
 Four quick steps are needed to make an API call:
@@ -224,9 +232,9 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
-        publicKeyId: 'ABC123DEF456XYZ',
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
         privateKey: fs.readFileSync('tst/private.pem'),
-        region: 'us',
+        region: 'YOUR_REGION_CODE',
         sandbox: true,
         algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
@@ -243,8 +251,12 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
     };
 
     const testPayClient = new Client.WebStoreClient(config);
-    testPayClient.createCheckoutSession(payload, headers).then((apiResponse) => {
-        const response = apiResponse;
+    const response = testPayClient.createCheckoutSession(payload, headers);
+
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
     });
 ```
 
@@ -252,25 +264,24 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 
 ``` js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
-        publicKeyId: 'ABC123DEF456XYZ',
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
         privateKey: fs.readFileSync('tst/private.pem'),
-        region: 'us',
+        region: 'YOUR_REGION_CODE',
         sandbox: true,
         algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
 
-    const headers = {
-        'x-amz-pay-idempotency-key': uuidv4().toString().replace(/-/g, '')
-    };
-
-    const checkoutSessionId = 00000000-0000-0000-0000-000000000000;
+    const checkoutSessionId = "00000000-0000-0000-0000-000000000000";
     const testPayClient = new Client.WebStoreClient(config);
-    testPayClient.getCheckoutSession(checkoutSessionId, headers).then((apiResponse) => {
-        const response = apiResponse;
+    const response = testPayClient.getCheckoutSession(checkoutSessionId);
+
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
     });
 ```
 
@@ -278,13 +289,12 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 
 ``` js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
-        publicKeyId: 'ABC123DEF456XYZ',
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
         privateKey: fs.readFileSync('tst/private.pem'),
-        region: 'us',
+        region: 'YOUR_REGION_CODE',
         sandbox: true,
         algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
@@ -309,14 +319,201 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
         }
     };
 
-    const checkoutSessionId = 00000000-0000-0000-0000-000000000000;
+    const checkoutSessionId = "00000000-0000-0000-0000-000000000000";
     const testPayClient = new Client.WebStoreClient(config);
-    testPayClient.updateCheckoutSession(checkoutSessionId, payload).then((apiResponse) => {
-        const response = apiResponse;
+    const response = testPayClient.updateCheckoutSession(checkoutSessionId, payload);
+
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
     });
 ```
 
-## Checkout v2 - Capture Charge
+## Checkout v2 - Complete Checkout Session
+
+``` js
+    const fs = require('fs');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const payload = {
+        "chargeAmount": {
+            "amount": "1.23",
+            "currencyCode": "USD"
+        }
+    };
+
+    const checkoutSessionId = "00000000-0000-0000-0000-000000000000";
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.completeCheckoutSession(checkoutSessionId, payload);
+
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+
+## Checkout v2 - Get Charge Permission API
+```js
+    const fs = require('fs');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const chargePermissionId = "S01-0000000-0000000";
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.getChargePermission(chargePermissionId);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Checkout v2 - Update Charge Permission API
+```js
+    const fs = require('fs');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const chargePermissionId = "S01-0000000-0000000";
+    const payload = {
+        merchantMetadata: {
+            merchantReferenceId: "32-41-323141-32",
+            merchantStoreName: "AmazonTestStoreFront",
+            noteToBuyer: "Some Note to buyer",
+            customInformation: ""
+        }
+    };
+
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.updateChargePermission(chargePermissionId, payload);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Checkout v2 - Close Charge Permission API
+```js
+    const fs = require('fs');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const chargePermissionId = "S01-0000000-0000000";
+    const payload = {
+        closureReason: "No more charges required",
+        cancelPendingCharges: false
+    };
+
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.closeChargePermission(chargePermissionId, payload);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Checkout v2 - Create Charge API
+```js
+    const fs = require('fs');
+    const uuidv4 = require('uuid/v4');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const payload = {
+        chargePermissionId: "S01-0000000-0000000",
+        chargeAmount: {
+            amount: "14.00",
+            currencyCode: "USD"
+        },
+        captureNow: true,
+        softDescriptor: "Descriptor",
+        canHandlePendingAuthorization: false
+    };
+
+    const headers = {
+        'x-amz-pay-idempotency-key': uuidv4().toString().replace(/-/g, '')
+    };
+
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.createCharge(payload, headers);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Checkout v2 - Get Charge API
+```js
+    const fs = require('fs');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const chargeId = "S01-0000000-0000000-C000000";
+
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.getCharge(chargeId);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Checkout v2 - Capture Charge API
 
 ``` js
     const fs = require('fs');
@@ -324,9 +521,9 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
-        publicKeyId: 'ABC123DEF456XYZ',
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
         privateKey: fs.readFileSync('tst/private.pem'),
-        region: 'us',
+        region: 'YOUR_REGION_CODE',
         sandbox: true,
         algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
@@ -338,14 +535,112 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
         },
         softDescriptor: 'AMZN'
     };
+
     const headers = {
         'x-amz-pay-idempotency-key': uuidv4().toString().replace(/-/g, '')
     };
 
     const chargeId = 'S01-0000000-0000000-C000000';
     const testPayClient = new Client.WebStoreClient(config);
-    testPayClient.captureCharge(chargeId, payload, headers).then((apiResponse) => {
-        const response = apiResponse;
+    const response = testPayClient.captureCharge(chargeId, payload, headers);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Checkout v2 - Cancel Charge API
+
+``` js
+    const fs = require('fs');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const payload = {
+        cancellationReason: 'REASON DESCRIPTION'
+    };
+
+    const chargeId = 'S01-0000000-0000000-C000000';
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.cancelCharge(chargeId, payload);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Checkout v2 - Create Refund API
+
+``` js
+    const fs = require('fs');
+    const uuidv4 = require('uuid/v4');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const payload = {
+        chargeId: 'S01-0000000-0000000-C000000',
+        refundAmount: {
+            amount: '14.00',
+            currencyCode: 'USD'
+        },
+        softDescriptor: 'Descriptor'
+    };
+
+    const headers = {
+        'x-amz-pay-idempotency-key': uuidv4().toString().replace(/-/g, '')
+    };
+
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.createRefund(payload, headers);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Checkout v2 - Get Refund API
+
+``` js
+    const fs = require('fs');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const refundId = "S01-0000000-0000000-R000000";
+
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.getRefund(refundId);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
     });
 ```
 
@@ -375,9 +670,9 @@ Example call to generateButtonSignature function:
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
-        publicKeyId: 'ABC123DEF456XYZ',
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
         privateKey: fs.readFileSync('tst/private.pem'),
-        region: 'us',
+        region: 'YOUR_REGION_CODE',
         sandbox: true,
         algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
@@ -504,8 +799,9 @@ Example request method:
     const config = {
         publicKeyId: 'YOUR_PUBLIC_KEY_ID',
         privateKey: fs.readFileSync('tst/private.pem'),
-        region: 'us',
+        region: 'YOUR_REGION_CODE',
         sandbox: false,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
 
     const testPayClient = new Client.WebStoreClient(config);
@@ -530,8 +826,9 @@ Example request method:
     const config = {
         publicKeyId: 'YOUR_PUBLIC_KEY_ID',
         privateKey: fs.readFileSync('tst/private.pem'),
-        region: 'us',
+        region: 'YOUR_REGION_CODE',
         sandbox: false,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
 
     const reportId = '1234567890';
@@ -554,11 +851,12 @@ Example request method:
     const config = {
         publicKeyId: 'YOUR_PUBLIC_KEY_ID',
         privateKey: fs.readFileSync('tst/private.pem'),
-        region: 'us',
+        region: 'YOUR_REGION_CODE',
         sandbox: false,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
 
-    const reportDocumentId = '1234567890';
+    const reportDocumentId = 'amzn1.tortuga.0.000000000-0000-0000-0000-000000000000.00000000000000';
     const testPayClient = new Client.WebStoreClient(config);
     const response = testPayClient.getReportDocument(reportDocumentId);
     
@@ -578,8 +876,9 @@ Example request method:
     const config = {
         publicKeyId: 'YOUR_PUBLIC_KEY_ID',
         privateKey: fs.readFileSync('tst/private.pem'),
-        region: 'us',
+        region: 'YOUR_REGION_CODE',
         sandbox: false,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
 
     const reportTypes = '_GET_FLAT_FILE_OFFAMAZONPAYMENTS_ORDER_REFERENCE_DATA_,_GET_FLAT_FILE_OFFAMAZONPAYMENTS_BILLING_AGREEMENT_DATA_';
@@ -602,8 +901,9 @@ Example request method:
     const config = {
         publicKeyId: 'YOUR_PUBLIC_KEY_ID',
         privateKey: fs.readFileSync('tst/private.pem'),
-        region: 'us',
+        region: 'YOUR_REGION_CODE',
         sandbox: false,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
 
     const reportScheduleId = '1234567890';
@@ -626,8 +926,9 @@ Example request method:
     const config = {
         publicKeyId: 'YOUR_PUBLIC_KEY_ID',
         privateKey: fs.readFileSync('tst/private.pem'),
-        region: 'us',
+        region: 'YOUR_REGION_CODE',
         sandbox: false,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
 
     const requestPayload = {
@@ -654,8 +955,9 @@ Example request method:
     const config = {
         publicKeyId: 'YOUR_PUBLIC_KEY_ID',
         privateKey: fs.readFileSync('tst/private.pem'),
-        region: 'us',
+        region: 'YOUR_REGION_CODE',
         sandbox: false,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
 
     const requestPayload = {
@@ -683,13 +985,68 @@ Example request method:
     const config = {
         publicKeyId: 'YOUR_PUBLIC_KEY_ID',
         privateKey: fs.readFileSync('tst/private.pem'),
-        region: 'us',
+        region: 'YOUR_REGION_CODE',
         sandbox: false,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
     };
 
     const reportScheduleId = "1234567890";
     const testPayClient = new Client.WebStoreClient(config);
     const response = testPayClient.cancelReportSchedule(reportScheduleId);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Amazon Checkout v2 SPC - Finalize Checkout Session API
+```js
+    const fs = require('fs');
+    const uuidv4 = require('uuid/v4');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const checkoutSessionId = "00000000-0000-0000-0000-000000000000";
+    const payload = {
+        shippingAddress: {
+            name: "Susie Smith",
+            addressLine1: "10 Ditka Ave",
+            addressLine2: "Suite 2500",
+            city: "Chicago",
+            county: null,
+            district: null,
+            stateOrRegion: "IL",
+            postalCode: "60602",
+            countryCode: "US",
+            phoneNumber: "800-000-0000"
+        },
+        billingAddress: null,
+        chargeAmount: {
+            amount: 10,
+            currencyCode: "USD"
+        },
+        totalOrderAmount: {
+            amount: 10,
+            currencyCode: "USD"
+        },
+        paymentIntent: "Confirm",
+        canHandlePendingAuthorization: false
+    };
+    const headers = {
+        'x-amz-pay-idempotency-key': uuidv4().toString().replace(/-/g, '')
+    };
+
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.finalizeCheckoutSession(checkoutSessionId, payload, headers);
     
     response.then(function (result) {
         console.log(result.data);

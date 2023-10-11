@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    SDK_VERSION: '2.3.0',
+    SDK_VERSION: '2.3.1',
     API_VERSION: 'v2',
     RETRIES: 3,
     API_ENDPOINTS: {
@@ -20,5 +20,6 @@ module.exports = {
     AMAZON_SIGNATURE_ALGORITHM: {
         DEFAULT: { name: 'AMZN-PAY-RSASSA-PSS', saltLength: 20 },
         V2: { name: 'AMZN-PAY-RSASSA-PSS-V2', saltLength: 32 }
-    }
+    },
+    ACCOUNT_MANAGEMENT: 'merchantAccounts'
 };

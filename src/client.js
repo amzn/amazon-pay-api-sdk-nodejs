@@ -1,6 +1,7 @@
 'use strict';
 
 const helper = require('./clientHelper');
+const constants = require('./constants');
 
 class AmazonPayClient {
     constructor(configArgs) {
@@ -217,6 +218,23 @@ class WebStoreClient extends AmazonPayClient {
         return helper.enhanceResponseWithShippingAddressList(response);
     }
 
+    // ----------------------------------- Buy Now -----------------------------------
+
+    /** FinalizeCheckoutSession API which enables Pay to validate payment critical attributes and also update book-keeping attributes present in merchantMetadata 
+     * 
+     * @param {String} checkoutSessionId - The checkout session Id
+     * @param {Object} payload - The payload for the request
+     * @param {Object} [headers=null] - The headers for the request
+     */
+    finalizeCheckoutSession(checkoutSessionId, payload, headers = null) {
+        return this.apiCall({
+            method: 'POST',
+            urlFragment: `checkoutSessions/${checkoutSessionId}/finalize`,
+            payload: payload,
+            headers: headers
+        });
+    }
+
     /** API to get a ChargePermission object
      *   - Retrives details of a previously created ChargePermission object.
      * @see https://amazonpaycheckoutintegrationguide.s3.amazonaws.com/amazon-pay-api-v2/charge-permission.html#get-charge-permission
@@ -364,12 +382,14 @@ class WebStoreClient extends AmazonPayClient {
      * @param {Object} [headers=null] - The headers for the request
     **/
    getReports(queryParameters = null, headers = null) {
-        const {reportTypes, processingStatuses } = queryParameters;
-        if(Array.isArray(reportTypes)){
-            queryParameters.reportTypes = reportTypes.toString();
-        }
-        if(Array.isArray(processingStatuses)){
-            queryParameters.processingStatuses = processingStatuses.toString();
+        if(queryParameters) {
+            const {reportTypes, processingStatuses } = queryParameters;
+            if(Array.isArray(reportTypes)){
+                queryParameters.reportTypes = reportTypes.toString();
+            }
+            if(Array.isArray(processingStatuses)){
+                queryParameters.processingStatuses = processingStatuses.toString();
+            }
         }
         return this.apiCall({
             method: 'GET',
@@ -490,7 +510,52 @@ class WebStoreClient extends AmazonPayClient {
         });
     }     
 
-    
+    // ----------------------------------- Merchant Onboarding & Account Management APIs --------------------
+
+    /**
+     * Creates a non-logginable account for your merchant partners. These would be special accounts through which Merchants would not be able to login to Amazon or access Seller Central.
+     * 
+     * @param {Object} payload - The payload for the request
+     * @param {Object} [headers=null] - The headers for the request
+     */
+    registerAmazonPayAccount(payload, headers = null) {
+        return this.apiCall({
+            method: 'POST',
+            urlFragment: `${constants.ACCOUNT_MANAGEMENT}`,
+            payload: payload,
+            headers: headers
+        });
+    }
+
+    /**
+     * Updates a merchant account for the given Merchant Account ID. We would be allowing our partners to update only a certain set of fields which won’t change the legal business entity itself.
+     * 
+     * @param {String} merchantAccountId - Internal Merchant Account ID
+     * @param {Object} payload - The payload for the request
+     * @param {Object} [headers=null] - The headers for the request 
+     */
+    updateAmazonPayAccount(merchantAccountId, payload, headers = null) {
+        return this.apiCall({
+            method: 'PATCH',
+            urlFragment: `${constants.ACCOUNT_MANAGEMENT}/${merchantAccountId}`,
+            payload: payload,
+            headers: headers
+        });
+    }
+
+    /**
+     * Deletes the Merchant account for the given Merchant Account ID. Partners can close the merchant accounts created for their merchant partners.
+     * 
+     * @param {String} merchantAccountId - Internal Merchant Account ID
+     * @param {Object} [headers=null] - The headers for the requestrs 
+     */
+    deleteAmazonPayAccount(merchantAccountId, headers = null) {
+        return this.apiCall({
+            method: 'DELETE',
+            urlFragment: `${constants.ACCOUNT_MANAGEMENT}/${merchantAccountId}`,
+            headers: headers
+        });
+    }
 }
 
 module.exports = {

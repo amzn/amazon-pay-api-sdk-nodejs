@@ -1,3 +1,10 @@
+### Version 2.3.1 - October 2023
+* Introducing new API called finalizeCheckoutSession which validates checkout attributes and finalizes checkout session. On success returns charge permission id and charge id. Use this API to process payments for JavaScript-based integrations.
+* Introducing new Merchant Onboarding & Account Management APIs, which allows our partners to onboard merchants programatically and as part of account management offer them creation, updation and deletion/dissociation capability.
+* Fixed the getReports API to handle null query parameters without throwing errors.
+* Added the Sample Code snippets for the Charge APIs, Charge Permission APIs and Refund APIs.
+* Updated the README file.
+
 ### Version 2.3.0 - March 2023
 * Introducing new v2 Reporting APIs. Reports allow you to retieve consolidated data about Amazon Pay transactions and settlements. In addition to managing and downloading reports using Seller Central, Amazon Pay offers APIs to manage and retrieve your reports.
 * Introducing new signature generation algorithm AMZN-PAY-RSASSA-PSS-V2 and increasing salt length from 20 to 32.

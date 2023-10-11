@@ -17,6 +17,8 @@ const chargePermissionId = ''; // Enter Charge Permission ID
 const chargePermissionIdWithV2Algorithm = ''; // Enter Charge Permission ID
 const buyerToken = ''; // Enter Buyer Token
 const buyerTokenWithV2Algorithm = ''; // Enter Buyer Token
+const finalizeCheckoutSessionId = ''; // Enter Chechout Session Id for SPC flow
+const finalizeCheckoutSessionIdWithV2Algorithm = ''; // Enter Chechout Session Id for SPC flow
 
 // Intiating WebStoreClient Class
 const webStoreClient = new Client.WebStoreClient(config);
@@ -27,6 +29,8 @@ var checkoutSessionId;
 var chargeId;
 var chargeIdWithV2Algorithm;
 var refundId;
+var merchantAccountId;
+var reportScheduleId;
 
 const createCheckoutSessionPayload = {
     webCheckoutDetails: {
@@ -55,6 +59,32 @@ const completeCheckoutSessionPayload = {
         currencyCode: config.currencyCode
     }
 }
+const finalizeCheckoutSessionPayload = {
+    shippingAddress: {
+        name: "Susie Smith",
+        addressLine1: "10 Ditka Ave",
+        addressLine2: "Suite 2500",
+        city: "Chicago",
+        county: null,
+        district: null,
+        stateOrRegion: "IL",
+        postalCode: "60602",
+        countryCode: "US",
+        phoneNumber: "800-000-0000"
+    },
+  	billingAddress: null,
+  	chargeAmount: {
+        amount: "10",
+        currencyCode: "USD"
+    },
+    totalOrderAmount: {
+        amount: "10",
+        currencyCode: "USD"
+    },
+    paymentIntent: "Confirm",
+    canHandlePendingAuthorization: false,
+    supplementaryData: "TestSupplementaryData-onInitCheckout"
+};
 const updateChargePermissionPayload = {
     merchantMetadata: {
         merchantReferenceId: uuidv4().toString().replace(/-/g, ''),
@@ -97,6 +127,88 @@ const cancelChargePayload = {
     cancellationReason: 'Cancelling Charge Test'
 };
 
+const createIndividualBusinessPayload = {
+    uniqueReferenceId: 'ABCD12345CB',
+    ledgerCurrency: 'JPY',
+    businessInfo: {
+        businessType: 'INDIVIDUAL',
+        countryOfEstablishment: 'JP',
+        businessLegalName: 'TestingSubmerchant',
+        businessAddress: {
+            addressLine1: '450 Noda',
+            city: '香取市',
+            stateOrRegion: '千葉県',
+            postalCode: '289-0314',
+            countryCode: 'JP'
+        }
+    }
+};
+
+const createCorporateBusinessPayload = {
+    uniqueReferenceId: 'ABCD12345CB',
+    ledgerCurrency: 'JPY',
+    businessInfo: {
+        businessType: 'CORPORATE',
+        countryOfEstablishment: 'JP',
+        businessLegalName: 'TestingSubmerchant',
+        businessAddress: {
+            addressLine1: '450',
+            addressLine2: 'Noda',
+            city: '香取市',
+            stateOrRegion: '千葉県',
+            postalCode: '289-0314',
+            countryCode: 'JP'
+        }
+    },
+    primaryContactPerson: {
+        personFullName: 'Integration Tests',
+        residentialAddress: {
+            addressLine1: '4-7, Sunny Mansion 203',
+            addressLine2: 'Hommachi 2 choume',
+            city: 'Chiryushi',
+            stateOrRegion: 'AICHI',
+            postalCode: '4720021',
+            countryCode: 'JP'
+        }
+    }
+};
+
+const createCorporateWithoutPocPayload = {
+    uniqueReferenceId: 'ABCD12345CB',
+    ledgerCurrency: 'JPY',
+    businessInfo: {
+        businessType: 'CORPORATE',
+        countryOfEstablishment: 'JP',
+        businessLegalName: 'TestingSubmerchant',
+        businessAddress: {
+            addressLine1: '450',
+            addressLine2: 'Noda',
+            city: '香取市',
+            stateOrRegion: '千葉県',
+            postalCode: '289-0314',
+            countryCode: 'JP'
+        }
+    }
+};
+
+const createUpdatePayload = {
+    businessInfo: {
+        businessAddress: {
+            addressLine1: '41 Nishigamo Kitaimaharacho',
+            city: '京都市',
+            stateOrRegion: '京都府',
+            postalCode: '603-8821',
+            countryCode: 'JP'
+        }
+    }
+};
+
+function validateGetBuyerResponse(result) {
+    assert.strictEqual(result.status, 200);
+    var actualResponse = result.data;
+    assert.deepStrictEqual(actualResponse.buyerId.startsWith('amzn1.account.'), true);
+}
+
 // Validating Checkout Session API Calls
 describe('WebStore Client Test Cases - Checkout Session APIs', () => {
     before(function () {
@@ -115,6 +227,7 @@ describe('WebStore Client Test Cases - Checkout Session APIs', () => {
         orderType: '',
         recurringMetadata: '',
         paymentMethodOnFileMetadata: '',
+        merchantDetails: '',
         merchantMetadata: '',
         supplementaryData: '',
         buyer: '',
@@ -131,121 +244,157 @@ describe('WebStore Client Test Cases - Checkout Session APIs', () => {
         storeId: '',
         providerMetadata: '',
         releaseEnvironment: '',
-        deliverySpecifications: ''
+        checkoutButtonText: '',
+        deliverySpecifications: '',
+        tokens: ''
     };
 
     it('Validating Get Buyer API', (done) => {
-        webStoreClient.getBuyer(buyerToken, headers).then(function (result) {
-            assert.strictEqual(result.status, 200);
-            var actualResponse = result.data;
-            assert.deepStrictEqual(actualResponse.buyerId.startsWith('amzn1.account.'), true);
-            done();
-        }).catch(err => {
-            done(err);
-        });
+        webStoreClient.getBuyer(buyerToken, headers)
+            .then(validateGetBuyerResponse)
+            .then(done)
+            .catch(done);
     });
 
     it('Validating Get Buyer API with V2 Algorithm', (done) => {
-        webStoreClientWithAlgorithm.getBuyer(buyerTokenWithV2Algorithm, headersWithV2Algorithm).then(function (result) {
-            assert.strictEqual(result.status, 200);
-            var actualResponse = result.data;
-            assert.deepStrictEqual(actualResponse.buyerId.startsWith('amzn1.account.'), true);
-            done();
-        }).catch(err => {
-            done(err);
-        });
+        webStoreClientWithAlgorithm.getBuyer(buyerTokenWithV2Algorithm, headersWithV2Algorithm)
+            .then(validateGetBuyerResponse)
+            .then(done)
+            .catch(done);
     });
 
-    it('Validating Create Checkout Session API', (done) => {
-        webStoreClient.createCheckoutSession(createCheckoutSessionPayload, headers).then(function (result) {
-            assert.strictEqual(result.status, 201);
+    function validateCreateCheckoutSessionResponse(result) {
+        assert.strictEqual(result.status, 201);
             var actualResponse = result.data;
             checkoutSessionId = actualResponse.checkoutSessionId;
             assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-            done();
-        }).catch(err => {
-            done.error(err);
-        });
+    }
+
+    it('Validating Create Checkout Session API', (done) => {
+        webStoreClient.createCheckoutSession(createCheckoutSessionPayload, headers)
+            .then(validateCreateCheckoutSessionResponse)
+            .then(done)
+            .catch(done);
     });
 
     it('Validating Create Checkout Session API with V2 Algorithm', (done) => {
-        webStoreClientWithAlgorithm.createCheckoutSession(createCheckoutSessionPayload, headersWithV2Algorithm).then(function (result) {
-            assert.strictEqual(result.status, 201);
-            var actualResponse = result.data;
-            checkoutSessionId = actualResponse.checkoutSessionId;
-            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-            done();
-        }).catch(err => {
-            done(err);
-        });
+        webStoreClientWithAlgorithm.createCheckoutSession(createCheckoutSessionPayload, headersWithV2Algorithm)
+            .then(validateCreateCheckoutSessionResponse)
+            .then(done)
+            .catch(done);
     });
 
     it('Validating Get Checkout Session API', (done) => {
-        webStoreClient.getCheckoutSession(checkoutSessionId, headers).then(function (result) {
-            assert.strictEqual(result.status, 200);
-            var actualResponse = result.data;
-            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-            done();
-        }).catch(err => {
-            done(err);
-        });
+        webStoreClient.getCheckoutSession(checkoutSessionId, headers)
+            .then(validateCheckoutSessionResponse)
+            .then(done)
+            .catch(done);
     });
 
     it('Validating Get Checkout Session API with V2 Algorithm', (done) => {
-        webStoreClientWithAlgorithm.getCheckoutSession(checkoutSessionId, headersWithV2Algorithm).then(function (result) {
-            assert.strictEqual(result.status, 200);
-            var actualResponse = result.data;
-            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-            done();
-        }).catch(err => {
-            done(err);
-        });
+        webStoreClientWithAlgorithm.getCheckoutSession(checkoutSessionId, headersWithV2Algorithm)
+            .then(validateCheckoutSessionResponse)
+            .then(done)
+            .catch(done);
     });
 
     it('Validating Update Checkout Session API', (done) => {
-        webStoreClient.updateCheckoutSession(checkoutSessionId, updateCheckoutSessionPayload).then(function (result) {
-            assert.strictEqual(result.status, 200);
-            var actualResponse = result.data;
-            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-            done();
-        }).catch(err => {
-            done(err);
-        });
+        webStoreClient.updateCheckoutSession(checkoutSessionId, updateCheckoutSessionPayload)
+            .then(validateCheckoutSessionResponse)
+            .then(done)
+            .catch(done);
     });
 
     it('Validating Update Checkout Session API with V2 Algorithm', (done) => {
-        webStoreClientWithAlgorithm.updateCheckoutSession(checkoutSessionId, updateCheckoutSessionPayload).then(function (result) {
-            assert.strictEqual(result.status, 200);
-            var actualResponse = result.data;
-            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-            done();
-        }).catch(err => {
-            done(err);
-        });
+        webStoreClientWithAlgorithm.updateCheckoutSession(checkoutSessionId, updateCheckoutSessionPayload)
+            .then(validateCheckoutSessionResponse)
+            .then(done)
+            .catch(done);
     });
 
     // Can only run this after visiting amazonPayRedirectUrl
     it.skip('Validating Complete Checkout Session API', (done) => {
-        webStoreClient.completeCheckoutSession(checkoutSessionId, completeCheckoutSessionPayload).then(function (result) {
-            assert.strictEqual(result.status, 200);
-            var actualResponse = result.data;
-            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-            done();
-        }).catch(err => {
-            done(err);
-        });
+        webStoreClient.completeCheckoutSession(checkoutSessionId, completeCheckoutSessionPayload)
+            .then(validateCheckoutSessionResponse)
+            .then(done)
+            .catch(done);
     });
 
     // Can only run this after visiting amazonPayRedirectUrl
     it.skip('Validating Complete Checkout Session API With V2 Algorithm', (done) => {
-        webStoreClient.completeCheckoutSession(checkoutSessionId, completeCheckoutSessionPayload).then(function (result) {
-            assert.strictEqual(result.status, 200);
-            var actualResponse = result.data;
-            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-            done();
-        }).catch(err => {
-            done(err);
-        });
+        webStoreClient.completeCheckoutSession(checkoutSessionId, completeCheckoutSessionPayload)
+            .then(validateCheckoutSessionResponse)
+            .then(done)
+            .catch(done);
+    });
+
+    function validateCheckoutSessionResponse(result) {
+        assert.strictEqual(result.status, 200);
+        var actualResponse = result.data;
+        assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+    }    
+});
+
+describe('WebStore Client Test Cases - Finalize Checkout Session APIs', () => {
+    before(function () {
+        if (!finalizeCheckoutSessionId && !finalizeCheckoutSessionIdWithV2Algorithm) {
+            console.error('Please provide finalize checkout session id before executing these test cases');
+            this.skip();
+        }
+    });
+
+    const expectedResponse = {
+        checkoutSessionId: '',
+        webCheckoutDetails: '',
+        productType: '',
+        paymentDetails: '',
+        cartDetails: '',
+        chargePermissionType: '',
+        orderType: '',
+        recurringMetadata: '',
+        paymentMethodOnFileMetadata: '',
+        merchantDetails: '',
+        merchantMetadata: '',
+        supplementaryData: '',
+        buyer: '',
+        billingAddress: '',
+        paymentPreferences: '',
+        statusDetails: '',
+        shippingAddress: '',
+        platformId: '',
+        chargePermissionId: '',
+        chargeId: '',
+        constraints: '',
+        creationTimestamp: '',
+        expirationTimestamp: '',
+        storeId: '',
+        providerMetadata: '',
+        releaseEnvironment: '',
+        checkoutButtonText: '',
+        deliverySpecifications: '',
+        tokens: ''
+    };
+
+    function validateCheckoutSessionResponse(result) {
+        assert.strictEqual(result.status, 200);
+        var actualResponse = result.data;
+        assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+    }
+    
+    // Test for finalizeCheckoutSession with V1 Algorithm
+    it('Validating Finalize Checkout Session API', (done) => {
+        webStoreClient.finalizeCheckoutSession(finalizeCheckoutSessionId, finalizeCheckoutSessionPayload)
+            .then(validateCheckoutSessionResponse)
+            .then(done)
+            .catch(done);
+    });
+
+    // Test for finalizeCheckoutSession with V2 Algorithm 
+    it('Validating Finalize Checkout Session API With V2 Algorithm', (done) => {
+        webStoreClient.finalizeCheckoutSession(finalizeCheckoutSessionIdWithV2Algorithm, finalizeCheckoutSessionPayload)
+            .then(validateCheckoutSessionResponse)
+            .then(done)
+            .catch(done);
     });
 });
 
@@ -279,71 +428,53 @@ describe('', () => {
             presentmentCurrency: ''
         };
 
+        function validateChargePermissionResponse(result) {
+            assert.strictEqual(result.status, 200);
+            var actualResponse = result.data;
+            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+        }
+
         it('Validating Get Charge Permission API', (done) => {
-            webStoreClient.getChargePermission(chargePermissionId, headers).then(function (result) {
-                assert.strictEqual(result.status, 200);
-                var actualResponse = result.data;
-                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-                done();
-            }).catch(err => {
-                done(err);
-            });
+            webStoreClient.getChargePermission(chargePermissionId, headers)
+                .then(validateChargePermissionResponse)
+                .then(done)
+                .catch(done);
         });
 
         it('Validating Get Charge Permission API with V2 Algorithm', (done) => {
-            webStoreClientWithAlgorithm.getChargePermission(chargePermissionIdWithV2Algorithm, headersWithV2Algorithm).then(function (result) {
-                assert.strictEqual(result.status, 200);
-                var actualResponse = result.data;
-                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-                done();
-            }).catch(err => {
-                done(err);
-            });
+            webStoreClientWithAlgorithm.getChargePermission(chargePermissionIdWithV2Algorithm, headersWithV2Algorithm)
+                .then(validateChargePermissionResponse)
+                .then(done)
+                .catch(done);
         });
 
         it('Validating Update Charge Permission API', (done) => {
-            webStoreClient.updateChargePermission(chargePermissionId, updateChargePermissionPayload, headers).then(function (result) {
-                assert.strictEqual(result.status, 200);
-                var actualResponse = result.data;
-                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-                done();
-            }).catch(err => {
-                done(err);
-            });
+            webStoreClient.updateChargePermission(chargePermissionId, updateChargePermissionPayload, headers)
+                .then(validateChargePermissionResponse)
+                .then(done)
+                .catch(done);
         });
 
         it('Validating Update Charge Permission API with V2 Algorithm', (done) => {
-            webStoreClientWithAlgorithm.updateChargePermission(chargePermissionIdWithV2Algorithm, updateChargePermissionPayload, headersWithV2Algorithm).then(function (result) {
-                assert.strictEqual(result.status, 200);
-                var actualResponse = result.data;
-                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-                done();
-            }).catch(err => {
-                done(err);
-            });
+            webStoreClientWithAlgorithm.updateChargePermission(chargePermissionIdWithV2Algorithm, updateChargePermissionPayload, headersWithV2Algorithm)
+                .then(validateChargePermissionResponse)
+                .then(done)
+                .catch(done);
         });
 
         // Cannot Create Charge if Close Charge Permission is executed, unskip this test case and skip Charge API Tests to validate this API 
         it.skip('Validating Close Charge Permission API', (done) => {
-            webStoreClient.closeChargePermission(chargePermissionId, closeChargePermissionPayload, headers).then(function (result) {
-                assert.strictEqual(result.status, 200);
-                var actualResponse = result.data;
-                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-                done();
-            }).catch(err => {
-                done(err);
-            });
+            webStoreClient.closeChargePermission(chargePermissionId, closeChargePermissionPayload, headers)
+                .then(validateChargePermissionResponse)
+                .then(done)
+                .catch(done);
         });
 
         it.skip('Validating Close Charge Permission API with V2 Algorithm', (done) => {
-            webStoreClient.closeChargePermission(chargePermissionIdWithV2Algorithm, closeChargePermissionPayload, headersWithV2Algorithm).then(function (result) {
-                assert.strictEqual(result.status, 200);
-                var actualResponse = result.data;
-                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-                done();
-            }).catch(err => {
-                done(err);
-            });
+            webStoreClient.closeChargePermission(chargePermissionIdWithV2Algorithm, closeChargePermissionPayload, headersWithV2Algorithm)
+                .then(validateChargePermissionResponse)
+                .then(done)
+                .catch(done);
         });
     });
 
@@ -366,7 +497,8 @@ describe('', () => {
             expirationTimestamp: '',
             releaseEnvironment: '',
             merchantMetadata: '',
-            platformId: ''
+            platformId: '',
+            webCheckoutDetails: ''
         };
 
         before(function () {
@@ -376,100 +508,75 @@ describe('', () => {
             }
         });
 
+        function validateCreateChargeResponse(result) {
+            assert.strictEqual(result.status, 201);
+            var actualResponse = result.data;
+            chargeId = actualResponse.chargeId;
+            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+        }
+
         it('Validating Create Charge API', (done) => {
-            webStoreClient.createCharge(createChargePayload, headers).then(function (result) {
-                assert.strictEqual(result.status, 201);
-                var actualResponse = result.data;
-                chargeId = actualResponse.chargeId;
-                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-                done();
-            }).catch(err => {
-                done(err);
-            });
+            webStoreClient.createCharge(createChargePayload, headers)
+                .then(validateCreateChargeResponse)
+                .then(done)
+                .catch(done);
         });
 
         it('Validating Create Charge API with V2 Algorithm', (done) => {
-            webStoreClientWithAlgorithm.createCharge(createChargePayloadWithV2Algorithm, headersWithV2Algorithm).then(function (result) {
-                assert.strictEqual(result.status, 201);
-                var actualResponse = result.data;
-                chargeIdWithV2Algorithm = actualResponse.chargeId;
-                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-                done();
-            }).catch(err => {
-                done(err);
-            });
+            webStoreClientWithAlgorithm.createCharge(createChargePayloadWithV2Algorithm, headersWithV2Algorithm)
+                .then(validateCreateChargeResponse)
+                .then(done)
+                .catch(done);
         });
 
+        function validateChargeResponse(result) {
+            assert.strictEqual(result.status, 200);
+            var actualResponse = result.data;
+            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+        }
+
         it('Validating Get Charge API', (done) => {
-            webStoreClient.getCharge(chargeId, headers).then(function (result) {
-                assert.strictEqual(result.status, 200);
-                var actualResponse = result.data;
-                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-                done();
-            }).catch(err => {
-                done(err);
-            });
+            webStoreClient.getCharge(chargeId, headers)
+                .then(validateChargeResponse)
+                .then(done)
+                .catch(done);
         });
 
         it('Validating Get Charge API with V2 Algorithm', (done) => {
-            webStoreClientWithAlgorithm.getCharge(chargeIdWithV2Algorithm, headersWithV2Algorithm).then(function (result) {
-                assert.strictEqual(result.status, 200);
-                var actualResponse = result.data;
-                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-                done();
-            }).catch(err => {
-                done(err);
-            });
+            webStoreClientWithAlgorithm.getCharge(chargeId, headersWithV2Algorithm)
+                .then(validateChargeResponse)
+                .then(done)
+                .catch(done);
         });
 
         it('Validating Capture Charge API', (done) => {
-            webStoreClient.captureCharge(chargeId, captureChargePayload, {
-                'x-amz-pay-idempotency-key': uuidv4().toString().replace(/-/g, '')
-            }).then(function (result) {
-                assert.strictEqual(result.status, 200);
-                var actualResponse = result.data;
-                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-                done();
-            }).catch(err => {
-                done(err);
-            });
+            webStoreClient.captureCharge(chargeId, captureChargePayload, headers)
+                .then(validateChargeResponse)
+                .then(done)
+                .catch(done);
         });
 
         it('Validating Capture Charge API with V2 Algorithm', (done) => {
-            webStoreClientWithAlgorithm.captureCharge(chargeIdWithV2Algorithm, captureChargePayload, {
-                'x-amz-pay-idempotency-key': uuidv4().toString().replace(/-/g, '')
-            }).then(function (result) {
-                assert.strictEqual(result.status, 200);
-                var actualResponse = result.data;
-                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-                done();
-            }).catch(err => {
-                done(err);
-            });
+            webStoreClientWithAlgorithm.captureCharge(chargeId, captureChargePayload, headers)
+                .then(validateChargeResponse)
+                .then(done)
+                .catch(done);
         });
 
         // Cannot Run both Capture charge and Cancel charge at same time, Run either Capture Capture or Cancel Charge
         it.skip('Validating Cancel Charge API', (done) => {
-            webStoreClient.cancelCharge(chargeId, cancelChargePayload, headers).then(function (result) {
-                assert.strictEqual(result.status, 200);
-                var actualResponse = result.data;
-                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-                done();
-            }).catch(err => {
-                done(err);
-            });
+            webStoreClient.cancelCharge(chargeId, cancelChargePayload, headers)
+                .then(validateChargeResponse)
+                .then(done)
+                .catch(done);
         });
 
         // Cannot Run both Capture charge and Cancel charge at same time, Run either Capture Capture or Cancel Charge
         it.skip('Validating Cancel Charge API with V2 Algorithm', (done) => {
-            webStoreClientWithAlgorithm.cancelCharge(chargeIdWithV2Algorithm, cancelChargePayload, headersWithV2Algorithm).then(function (result) {
-                assert.strictEqual(result.status, 200);
-                var actualResponse = result.data;
-                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-                done();
-            }).catch(err => {
-                done(err);
-            });
+            webStoreClientWithAlgorithm.cancelCharge(chargeIdWithV2Algorithm, cancelChargePayload, headersWithV2Algorithm)
+                .then(validateChargeResponse)
+                .then(done)
+                .catch(done);
         });
     });
 
@@ -496,8 +603,15 @@ describe('', () => {
             }
         });
 
+        function validatCreateRefundResponse(result) {
+            assert.strictEqual(result.status, 201);
+            var actualResponse = result.data;
+            refundId = actualResponse.refundId;
+            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+        }
+
         it('Validating Create Refund API', (done) => {
-            const refundpaylod = {
+            const refundPayload = {
                 chargeId: chargeId,
                 refundAmount: {
                     amount: '0.01',
@@ -505,19 +619,14 @@ describe('', () => {
                 },
                 softDescriptor: 'SOFT_DESCRIPTOR'
             };
-            webStoreClient.createRefund(refundpaylod, headers).then(function (result) {
-                assert.strictEqual(result.status, 201);
-                var actualResponse = result.data;
-                refundId = actualResponse.refundId;
-                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-                done();
-            }).catch(err => {
-                done(err);
-            });
+            webStoreClient.createRefund(refundPayload, headers)
+                .then(validatCreateRefundResponse)
+                .then(done)
+                .catch(done);
         });
 
         it('Validating Create Refund API with V2 Algorithm', (done) => {
-            const refundpaylod = {
+            const refundPayload = {
                 chargeId: chargeId,
                 refundAmount: {
                     amount: '0.01',
@@ -525,45 +634,38 @@ describe('', () => {
                 },
                 softDescriptor: 'SOFT_DESCRIPTOR'
             };
-            webStoreClientWithAlgorithm.createRefund(refundpaylod, headers).then(function (result) {
-                assert.strictEqual(result.status, 201);
-                var actualResponse = result.data;
-                refundId = actualResponse.refundId;
-                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-                done();
-            }).catch(err => {
-                done(err);
-            });
+            webStoreClientWithAlgorithm.createRefund(refundPayload, headers)
+                .then(validatCreateRefundResponse)
+                .then(done)
+                .catch(done);
         });
 
+        function validatGetRefundResponse(result) {
+            assert.strictEqual(result.status, 200);
+            var actualResponse = result.data;
+            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+        }
+
         it('Validating Get Refund API', (done) => {
-            webStoreClient.getRefund(refundId, headers).then(function (result) {
-                assert.strictEqual(result.status, 200);
-                var actualResponse = result.data;
-                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-                done();
-            }).catch(err => {
-                done(err);
-            });
+            webStoreClient.getRefund(refundId, headers)
+                .then(validatGetRefundResponse)
+                .then(done)
+                .catch(done);
         });
 
         it('Validating Get Refund API with V2 Algorithm', (done) => {
-            webStoreClientWithAlgorithm.getRefund(refundId, headers).then(function (result) {
-                assert.strictEqual(result.status, 200);
-                var actualResponse = result.data;
-                assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
-                done();
-            }).catch(err => {
-                done(err);
-            });
+            webStoreClientWithAlgorithm.getRefund(refundId, headers)
+                .then(validatGetRefundResponse)
+                .then(done)
+                .catch(done);
         });
     });
 
 
     // ------------ Testing the CV2 Reporting APIs ---------------
     describe('WebStore Client Test Cases - CV2 Reporting APIs', (done) => {
-        const startTime = '20221118T150630Z';
-        const endTime = '20221202T150350Z';
+        const startTime = '20230618T150630Z';
+        const endTime = '20230911T150350Z';
 
         const expectGetReportResponse = {
             createdTime: '',
@@ -571,6 +673,7 @@ describe('', () => {
             processingEndTime: '',
             processingStartTime: '',
             processingStatus: '',
+            reportDocumentId: '',
             reportId: '',
             reportType: '',
             startTime: ''
@@ -605,7 +708,7 @@ describe('', () => {
 
         // Tests the GetReportById API
         it('Validating Get Report By Id API', (done) => {
-            const reportId = '60079019360';
+            const reportId = '59007019641';
             webStoreClient.getReportById(reportId, headers).then(function (result) {
                 assert.strictEqual(result.status, 200);
                 var response = result.data;
@@ -631,8 +734,25 @@ describe('', () => {
         // });
 
         // Tests Get Report Schedules API
+        it('Validating Create Report Schedule API', (done) => {
+            const requestPayload = {
+                'reportType': '_GET_FLAT_FILE_OFFAMAZONPAYMENTS_AUTHORIZATION_DATA_',
+                'scheduleFrequency': 'PT84H',
+                'nextReportCreationTime': startTime,
+                'deleteExistingSchedule': true
+            }
+            webStoreClient.createReportSchedule(requestPayload, headers).then(function (result) {
+                assert.strictEqual(result.status, 201);
+                var response = result.data;
+                reportScheduleId = response['reportScheduleId'];
+                done();
+            }).catch(err => {
+                done(err);
+            });
+        });
+
         it('Validating Get Report Schedules API', (done) => {
-            const reportTypes = '_GET_FLAT_FILE_OFFAMAZONPAYMENTS_ORDER_REFERENCE_DATA_,_GET_FLAT_FILE_OFFAMAZONPAYMENTS_BILLING_AGREEMENT_DATA_';
+            const reportTypes = '_GET_FLAT_FILE_OFFAMAZONPAYMENTS_AUTHORIZATION_DATA_,_GET_FLAT_FILE_OFFAMAZONPAYMENTS_BILLING_AGREEMENT_DATA_';
             webStoreClient.getReportSchedules(reportTypes, headers).then(function (result) {
                 assert.strictEqual(result.status, 200);
                 var response = result.data;
@@ -646,7 +766,6 @@ describe('', () => {
 
         // Tests Get Report Schedule by Id API
         it('Validating Get Report Schedule by Id API', (done) => {
-            const reportScheduleId = '50011019347';
             webStoreClient.getReportScheduleById(reportScheduleId, headers).then(function (result) {
                 assert.strictEqual(result.status, 200);
                 var response = result.data;
@@ -701,5 +820,51 @@ describe('', () => {
             });
         });
     });
-})
 
+    // ------------ Testing the Merchant Onboarding & Account Management APIs ---------------
+
+    describe('WebStore Client Test Cases - Merchant Onboarding & Account Management APIs', (done) => {
+
+        const expectedAmazonPayAccountResponse = {
+            uniqueReferenceId: '',
+            merchantAccountId: ''
+        };
+
+        function validateRegisterAmazonPayResponse(result) {
+            assert.strictEqual(result.status, 201);
+            var actualResponse = result.data;
+            merchantAccountId = actualResponse.merchantAccountId;
+            assert.deepStrictEqual(Object.keys(expectedAmazonPayAccountResponse), Object.keys(actualResponse));
+        }
+
+        function validateDeleteAmazonPayAccountResponse(result) {
+            assert.strictEqual(result.status, 202);
+        }
+
+        function validateUpdateAmazonPayAccountResponse(result) {
+            assert.strictEqual(result.status, 204);
+        }
+
+        // Validating Register, Update and Delete Amazon Pay Account APIs
+        function amazonPayAccountOperations(payload) {
+            return webStoreClient.registerAmazonPayAccount(payload, headers)
+                .then(validateRegisterAmazonPayResponse)
+                .then(() => webStoreClient.updateAmazonPayAccount(merchantAccountId, createUpdatePayload))
+                .then(validateUpdateAmazonPayAccountResponse)
+                .then(() => webStoreClient.deleteAmazonPayAccount(merchantAccountId))
+                .then(validateDeleteAmazonPayAccountResponse);
+        }
+
+        const testAmazonPayAccountOperations = (payload, businessType) => {
+            it(`Validating Register Amazon Pay Account API with ${businessType}`, (done) => {
+                amazonPayAccountOperations(payload)
+                    .then(done)
+                    .catch(done);
+            });    
+        }
+
+        testAmazonPayAccountOperations(createIndividualBusinessPayload, 'Individual Business Type');
+        testAmazonPayAccountOperations(createCorporateBusinessPayload, 'Corporate Business Type and with Poc');
+        testAmazonPayAccountOperations(createCorporateWithoutPocPayload, 'Corporate Business Type and without Poc');
+    });
+});
