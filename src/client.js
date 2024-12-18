@@ -153,7 +153,7 @@ class WebStoreClient extends AmazonPayClient {
 
     /** API to create a CheckoutSession object
      *   - Creates a new CheckoutSession object.
-     * @see https://amazonpaycheckoutintegrationguide.s3.amazonaws.com/amazon-pay-api-v2/checkout-session.html#create-checkout-session
+     * @see https://developer.amazon.com/docs/amazon-pay-api-v2/checkout-session.html#create-checkout-session
      * @param {Object} payload - The payload for the request
      * @param {Object} headers - The headers for the request
      **/
@@ -168,7 +168,7 @@ class WebStoreClient extends AmazonPayClient {
 
     /** API to get the CheckoutSession object
      *   - Retrives details of a previously created CheckoutSession object.
-     * @see https://amazonpaycheckoutintegrationguide.s3.amazonaws.com/amazon-pay-api-v2/checkout-session.html#get-checkout-session
+     * @see https://developer.amazon.com/docs/amazon-pay-api-v2/checkout-session.html#get-checkout-session
      * @param {String} checkoutSessionId - The checkout session Id
      * @param {Object} [headers=null] - The headers for the request
      **/
@@ -184,7 +184,7 @@ class WebStoreClient extends AmazonPayClient {
 
     /** API to update the CheckoutSession object
      *   - Updates a previously created CheckoutSession object.
-     * @see https://amazonpaycheckoutintegrationguide.s3.amazonaws.com/amazon-pay-api-v2/checkout-session.html#update-checkout-session
+     * @see https://developer.amazon.com/docs/amazon-pay-api-v2/checkout-session.html#update-checkout-session
      * @param {String} checkoutSessionId - The checkout session Id
      * @param {Object} payload - The payload for the request
      * @param {Object} [headers=null] - The headers for the request
@@ -237,7 +237,7 @@ class WebStoreClient extends AmazonPayClient {
 
     /** API to get a ChargePermission object
      *   - Retrives details of a previously created ChargePermission object.
-     * @see https://amazonpaycheckoutintegrationguide.s3.amazonaws.com/amazon-pay-api-v2/charge-permission.html#get-charge-permission
+     * @see https://developer.amazon.com/docs/amazon-pay-api-v2/charge-permission.html#get-charge-permission
      * @param {String} chargePermissionId - The charge permission Id
      * @param {Object} [headers=null] - The headers for the request
      **/
@@ -251,7 +251,7 @@ class WebStoreClient extends AmazonPayClient {
 
     /** API to update a ChargePermission object
      *   - Updates a previously created ChargePermission object.
-     * @see https://amazonpaycheckoutintegrationguide.s3.amazonaws.com/amazon-pay-api-v2/charge-permission.html#update-charge-permission
+     * @see https://developer.amazon.com/docs/amazon-pay-api-v2/charge-permission.html#update-charge-permission
      * @param {String} chargePermissionId - The charge permission Id
      * @param {Object} payload - The payload for the request
      * @param {Object} [headers=null] - The headers for the request
@@ -267,7 +267,7 @@ class WebStoreClient extends AmazonPayClient {
 
     /** API to close a ChargePermission object
      *   - Closes a perviously created ChargePermission object.
-     * @see https://amazonpaycheckoutintegrationguide.s3.amazonaws.com/amazon-pay-api-v2/charge-permission.html#close-charge-permission
+     * @see https://developer.amazon.com/docs/amazon-pay-api-v2/charge-permission.html#close-charge-permission
      * @param {String} chargePermissionId - The charge permission Id
      * @param {Object} payload - The payload for the request
      * @param {Object} [headers=null] - The headers for the request
@@ -283,7 +283,7 @@ class WebStoreClient extends AmazonPayClient {
 
     /** API to create a Charge object
      *   - Creates a new Charge object.
-     * @see https://amazonpaycheckoutintegrationguide.s3.amazonaws.com/amazon-pay-api-v2/charge.html#create-charge
+     * @see https://developer.amazon.com/docs/amazon-pay-api-v2/charge.html#create-charge
      * @param {Object} payload - The payload for the request
      * @param {Object} headers - The headers for the request
      **/
@@ -298,7 +298,7 @@ class WebStoreClient extends AmazonPayClient {
 
     /** API to get the Charge object
      *   - Retrieves a perviously created Charge object.
-     * @see https://amazonpaycheckoutintegrationguide.s3.amazonaws.com/amazon-pay-api-v2/charge.html#get-charge
+     * @see https://developer.amazon.com/docs/amazon-pay-api-v2/charge.html#get-charge
      * @param {String} chargeId - The charge Id
      * @param {Object} [headers=null] - The headers for the request
      **/
@@ -312,7 +312,7 @@ class WebStoreClient extends AmazonPayClient {
 
     /** API to create a captureCharge request
      *   - Captures an existing charge
-     * @see https://amazonpaycheckoutintegrationguide.s3.amazonaws.com/amazon-pay-api-v2/charge.html#capture-charge
+     * @see https://developer.amazon.com/docs/amazon-pay-api-v2/charge.html#capture-charge
      * @param {String} chargeId - The charge Id
      * @param {Object} payload - The payload for the request
      * @param {Object} [headers=null] - The headers for the request
@@ -328,7 +328,7 @@ class WebStoreClient extends AmazonPayClient {
 
     /** API to create a cancelCharge request
      *   - Cancels an existing charge.
-     * @see https://amazonpaycheckoutintegrationguide.s3.amazonaws.com/amazon-pay-api-v2/charge.html#cancel-charge
+     * @see https://developer.amazon.com/docs/amazon-pay-api-v2/charge.html#cancel-charge
      * @param {String} chargeId - The charge Id
      * @param {Object} payload - The payload for the request
      * @param {Object} [headers=null] - The headers for the request
@@ -344,7 +344,7 @@ class WebStoreClient extends AmazonPayClient {
 
     /** API to create a Refund object
      *   - Generates a refund.
-     * @see https://amazonpaycheckoutintegrationguide.s3.amazonaws.com/amazon-pay-api-v2/refund.html#create-refund
+     * @see https://developer.amazon.com/docs/amazon-pay-api-v2/refund.html#create-refund
      * @param {Object} payload - The payload for the request
      * @param {Object} headers - The headers for the request
      **/
@@ -359,7 +359,7 @@ class WebStoreClient extends AmazonPayClient {
 
     /** API to get a Refund object
      *   - Retreives details of an existing refund.
-     * @see https://amazonpaycheckoutintegrationguide.s3.amazonaws.com/amazon-pay-api-v2/refund.html#get-refund
+     * @see https://developer.amazon.com/docs/amazon-pay-api-v2/refund.html#get-refund
      * @param {String} refundId - The refund Id
      * @param {Object} [headers=null] - The headers for the request
      **/
