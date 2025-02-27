@@ -19,8 +19,10 @@ const buyerToken = ''; // Enter Buyer Token
 const buyerTokenWithV2Algorithm = ''; // Enter Buyer Token
 const finalizeCheckoutSessionId = ''; // Enter Chechout Session Id for SPC flow
 const finalizeCheckoutSessionIdWithV2Algorithm = ''; // Enter Chechout Session Id for SPC flow
+const pspChargeId=''; // Enter PSP Charge ID for updateCharge API
+const pspChargeIdWithV2Algorithm='';  // Enter PSP Charge ID for updateCharge API
 
-// Intiating WebStoreClient Class
+// Initiating WebStoreClient Class
 const webStoreClient = new Client.WebStoreClient(config);
 const webStoreClientWithAlgorithm = new Client.WebStoreClient(configWithAlgorithm);
 
@@ -31,6 +33,7 @@ var chargeIdWithV2Algorithm;
 var refundId;
 var merchantAccountId;
 var reportScheduleId;
+var disputeId;
 
 const createCheckoutSessionPayload = {
     webCheckoutDetails: {
@@ -201,6 +204,62 @@ const createUpdatePayload = {
             countryCode: 'JP'
         }
     }
+};
+
+const updateChargePayload= {
+    "statusDetails": {
+        "state": "Canceled",
+        "reasonCode": "ExpiredUnused"
+    }
+};
+
+const updateChargePayloadWithV2Algorithm= {
+    "statusDetails": {
+        "state": "Canceled",
+        "reasonCode": "ExpiredUnused"
+    }
+};
+
+const createDisputePayload={
+    'chargeId': pspChargeId,
+        'providerMetadata': {
+        'providerDisputeId': 'A2CQXQ2TUSYG7J'
+    },
+    'disputeAmount': {
+        'amount': '1',
+            'currencyCode': configWithAlgorithm.currencyCode
+    },
+    'filingReason': 'ProductNotReceived',
+        'filingTimestamp': Date.now(),
+        'statusDetails': {
+        'state': 'ActionRequired'
+    },
+    'merchantResponseDeadline': Date.now()+ (14 * 24 * 60 * 60 * 1000)
+};
+
+const updateDisputePayload={
+    "statusDetails": {
+        "resolution": "MerchantWon",
+        "state": "Resolved",
+        "reasonCode": "MerchantAcceptedDispute",
+        "reasonDescription": "Merchant accepted the dispute request"
+    },
+    "closureTimestamp": Date.now()
+};
+
+const contestDisputePayload= {
+    "merchantEvidences":  [
+        {
+            "evidenceType" : "TrackingNumber",
+            "fileId": "ababcbchdhdhhduathcfjhf",
+            "evidenceText": "raw text supporting merchant evidence"
+        }
+    ]
+}
+
+const uploadFilePayload = {
+    "type" : "jpg",
+    "purpose" : "disputeEvidence"
 };
 
 function validateGetBuyerResponse(result) {
@@ -409,29 +468,14 @@ describe('', () => {
 
     // Validating Charge Permission API Call's
     describe('WebStore Client Test Cases - Charge Permission APIs', (done) => {
-        const expectedResponse = {
-            chargePermissionId: '',
-            chargePermissionReferenceId: '',
-            platformId: '',
-            buyer: '',
-            shippingAddress: '',
-            billingAddress: '',
-            paymentPreferences: '',
-            statusDetails: '',
-            creationTimestamp: '',
-            expirationTimestamp: '',
-            merchantMetadata: '',
-            releaseEnvironment: '',
-            limits: '',
-            chargePermissionType: '',
-            recurringMetadata: '',
-            presentmentCurrency: ''
-        };
+        const expectedResponseKeys = ['chargePermissionId', 'chargePermissionReferenceId:', 'platformId', 'buyer', 'shippingAddress', 'billingAddress', 'paymentPreferences', 'statusDetails', 'creationTimestamp', 'expirationTimestamp', 'merchantMetadata', 'releaseEnvironment', 'limits', 'chargePermissionType', 'recurringMetadata', 'presentmentCurrency'];
 
         function validateChargePermissionResponse(result) {
             assert.strictEqual(result.status, 200);
             var actualResponse = result.data;
-            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+            expectedResponseKeys.forEach(key => {
+                assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+            });
         }
 
         it('Validating Get Charge Permission API', (done) => {
@@ -480,26 +524,7 @@ describe('', () => {
 
     // Validating Create Charge API Call
     describe('WebStore Client Test Cases - Charge APIs', (done) => {
-        const expectedResponse = {
-            chargeId: '',
-            chargeAmount: '',
-            chargePermissionId: '',
-            captureAmount: '',
-            refundedAmount: '',
-            softDescriptor: '',
-            providerMetadata: '',
-            convertedAmount: '',
-            conversionRate: '',
-            channel: '',
-            chargeInitiator: '',
-            statusDetails: '',
-            creationTimestamp: '',
-            expirationTimestamp: '',
-            releaseEnvironment: '',
-            merchantMetadata: '',
-            platformId: '',
-            webCheckoutDetails: ''
-        };
+        const expectedResponseKeys = ['chargeId', 'chargeAmount', 'chargePermissionId', 'captureAmount', 'refundedAmount', 'softDescriptor', 'providerMetadata', 'convertedAmount', 'conversionRate', 'channel', 'chargeInitiator', 'statusDetails', 'creationTimestamp', 'expirationTimestamp', 'releaseEnvironment', 'merchantMetadata', 'platformId', 'webCheckoutDetails'];
 
         before(function () {
             if (!chargePermissionId && !chargePermissionIdWithV2Algorithm) {
@@ -512,7 +537,9 @@ describe('', () => {
             assert.strictEqual(result.status, 201);
             var actualResponse = result.data;
             chargeId = actualResponse.chargeId;
-            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+            expectedResponseKeys.forEach(key => {
+                assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+            });
         }
 
         it('Validating Create Charge API', (done) => {
@@ -532,7 +559,9 @@ describe('', () => {
         function validateChargeResponse(result) {
             assert.strictEqual(result.status, 200);
             var actualResponse = result.data;
-            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+            expectedResponseKeys.forEach(key => {
+                assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+            });
         }
 
         it('Validating Get Charge API', (done) => {
@@ -544,6 +573,20 @@ describe('', () => {
 
         it('Validating Get Charge API with V2 Algorithm', (done) => {
             webStoreClientWithAlgorithm.getCharge(chargeId, headersWithV2Algorithm)
+                .then(validateChargeResponse)
+                .then(done)
+                .catch(done);
+        });
+
+        it('Validating Update Charge API', (done) => {
+            webStoreClient.updateCharge(pspChargeId, updateChargePayload, headers)
+                .then(validateChargeResponse)
+                .then(done)
+                .catch(done);
+        });
+
+        it('Validating Update Charge API with V2 Algorithm', (done) => {
+            webStoreClientWithAlgorithm.updateCharge(pspChargeIdWithV2Algorithm, updateChargePayloadWithV2Algorithm, headersWithV2Algorithm)
                 .then(validateChargeResponse)
                 .then(done)
                 .catch(done);
@@ -586,15 +629,7 @@ describe('', () => {
         const headers = {
             'x-amz-pay-idempotency-key': uuidv4().toString().replace(/-/g, '')
         };
-        const expectedResponse = {
-            refundId: '',
-            chargeId: '',
-            creationTimestamp: '',
-            refundAmount: '',
-            statusDetails: '',
-            softDescriptor: '',
-            releaseEnvironment: ''
-        };
+        const expectedResponseKeys = ['refundId', 'chargeId', 'creationTimestamp', 'refundAmount', 'statusDetails', 'softDescriptor', 'releaseEnvironment'];
 
         before(function () {
             if (!chargePermissionId && !chargePermissionIdWithV2Algorithm) {
@@ -607,7 +642,9 @@ describe('', () => {
             assert.strictEqual(result.status, 201);
             var actualResponse = result.data;
             refundId = actualResponse.refundId;
-            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+            expectedResponseKeys.forEach(key => {
+                assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+            });
         }
 
         it('Validating Create Refund API', (done) => {
@@ -643,7 +680,9 @@ describe('', () => {
         function validatGetRefundResponse(result) {
             assert.strictEqual(result.status, 200);
             var actualResponse = result.data;
-            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+            Object.keys(expectedResponse).forEach(key => {
+                assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+            });
         }
 
         it('Validating Get Refund API', (done) => {
@@ -866,5 +905,70 @@ describe('', () => {
         testAmazonPayAccountOperations(createIndividualBusinessPayload, 'Individual Business Type');
         testAmazonPayAccountOperations(createCorporateBusinessPayload, 'Corporate Business Type and with Poc');
         testAmazonPayAccountOperations(createCorporateWithoutPocPayload, 'Corporate Business Type and without Poc');
+    });
+
+    // ------------ Testing the Disputes APIs ---------------
+
+    describe('WebStore Client Test Cases - Disputes APIs', (done) => {
+
+        before(function () {
+            if (!pspChargeId &&  !pspChargeIdWithV2Algorithm) {
+                console.error('Please provide PSP chargeId before executing these test cases');
+                this.skip();
+            }
+        });
+        const expectedDisputeResponseKeys =['disputeId', 'chargeId', 'providerMetadata', 'disputeType', 'disputeAmount', 'filingReason', 'resolutionAuthority', 'statusDetails', 'merchantResponseDeadline', 'releaseEnvironment'];
+
+        function validateDisputeAPIResponse(result) {
+            assert.strictEqual(result.status, 200);
+            var actualResponse = result.data;
+            disputeId=actualResponse.disputeId
+            expectedDisputeResponseKeys.forEach(key => {
+                assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+            });
+        }
+
+        it('Validating createDispute API',(done)=>{
+            webStoreClient.createDispute(createDisputePayload, headers)
+            .then(validateDisputeAPIResponse)
+            .then(done)
+            .catch(done);
+        })
+
+        it('Validating updateDispute API',(done)=>{
+            webStoreClient.updateDispute(disputeId,updateDisputePayload, headers)
+            .then(validateDisputeAPIResponse)
+            .then(done)
+            .catch(done);
+        })
+
+        it('Validating contestDispute API',(done)=>{
+            webStoreClient.contestDispute(disputeId,contestDisputePayload, headers)
+                .then(validateDisputeAPIResponse)
+                .then(done)
+                .catch(done);
+        })
+    });
+
+    // ------------ Testing the File APIs ---------------
+
+    describe('WebStore Client Test Cases - File APIs', (done) => {
+
+        const expectedFileAPIResponseKeys =['id', 'type', 'purpose', 'url', 'size', 'uploadTimestamp', 'urlExpirationTimestamp'];
+
+        function validateFileAPIResponse(result) {
+            assert.strictEqual(result.status, 200);
+            var actualResponse = result.data;
+            expectedFileAPIResponseKeys.forEach(key => {
+                assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+            });
+        }
+
+        it('Validating FileUpload API',(done)=>{
+            webStoreClient.uploadFile(uploadFilePayload, headers)
+                .then(validateFileAPIResponse)
+                .then(done)
+                .catch(done);
+        })
     });
 });

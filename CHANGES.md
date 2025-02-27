@@ -1,3 +1,11 @@
+### Version 2.3.2 - February 2025
+* Introducing new v2 Dispute APIs for PSPs (Payment Service Provider). Buyers can create a dispute by filing an Amazon Pay A-to-z Guarantee claim or by filing a chargeback with their bank.
+* The `createDispute` API is used to notify Amazon of a newly created chargeback dispute by a buyer on a transaction processed by the PSP (Payment Service Provider), ensuring the dispute is properly accounted for in the Amazon Pay systems.
+* The `updateDispute` API is used to notify Amazon of the closure status of a chargeback dispute initiated by a buyer for orders processed by a partner PSP (Payment Service Provider), ensuring proper accounting within the Amazon systems.
+* The `contestDispute` API is used by the partner, on behalf of the merchant, to formally contest a dispute managed by Amazon, requiring the submission of necessary evidence files within the specified Dispute Window (11 days for Chargeback, 7 days for A-Z Claims).
+* The `uploadFile` API is utilised by PSPs (Payment Service Provider) to upload file-based evidence when a merchant contests a dispute, providing the necessary reference ID to the evidence file as part of the Update Dispute API process.
+* Introducing the `updateCharge` API which enables you to update the charge status of any PSP (Payment Service Provider) processed payment method (PPM) transactions.
+
 ### Version 2.3.1 - October 2023
 * Introducing new API called finalizeCheckoutSession which validates checkout attributes and finalizes checkout session. On success returns charge permission id and charge id. Use this API to process payments for JavaScript-based integrations.
 * Introducing new Merchant Onboarding & Account Management APIs, which allows our partners to onboard merchants programatically and as part of account management offer them creation, updation and deletion/dissociation capability.

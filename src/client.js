@@ -310,6 +310,25 @@ class WebStoreClient extends AmazonPayClient {
         });
     }
 
+    /** Amazon Checkout v2 - Update Charge
+     *
+     * The updateCharge operation is used to update the charge status of any PSP (Payment Service Provider) processed payment method (PPM) transactions.
+     * Please note that is API is supported only for PSPs (Payment Service Provider)
+     *
+     * @param {String} chargeId - The charge Id
+     * @param {Object} payload - The payload for the request
+     * @param {Object} [headers=null] - The headers for the request
+     *
+     */
+    updateCharge(chargeId, payload,headers) {
+        return this.apiCall({
+            method: 'PATCH',
+            urlFragment: `charges/${chargeId}`,
+            payload: payload,
+            headers: headers
+        });
+    }
+
     /** API to create a captureCharge request
      *   - Captures an existing charge
      * @see https://developer.amazon.com/docs/amazon-pay-api-v2/charge.html#capture-charge
@@ -553,6 +572,86 @@ class WebStoreClient extends AmazonPayClient {
         return this.apiCall({
             method: 'DELETE',
             urlFragment: `${constants.ACCOUNT_MANAGEMENT}/${merchantAccountId}`,
+            headers: headers
+        });
+    }
+
+    // ----------------------------------- Dispute APIs -----------------------------------
+
+    /** Amazon Checkout v2 - Create Dispute
+     *
+     * The createDispute operation is used to notify Amazon of a newly created chargeback dispute by a buyer on a transaction
+     * processed by the PSP (Payment Service Provider), ensuring the dispute is properly accounted for in the Amazon Pay systems.
+     *
+     * @param {Object} payload - The payload for the request
+     * @param {Object} headers - The headers for the request
+     *
+     */
+    createDispute(payload, headers) {
+        return this.apiCall({
+            method: 'POST',
+            urlFragment: `${constants.DISPUTES}`,
+            payload: payload,
+            headers: headers
+        });
+    }
+
+    /** Amazon Checkout v2 - Update Dispute
+     *
+     * The updateDispute operation is used to notify Amazon of the closure status of a chargeback dispute initiated by a
+     * buyer for orders processed by a partner PSP (Payment Service Provider), ensuring proper accounting within the Amazon systems.
+     *
+     * @param {String} disputeId - The dispute ID
+     * @param {Object} payload - The payload for the request
+     * @param {Object} [headers=null] - The headers for the request
+     *
+     */
+    updateDispute(disputeId, payload, headers) {
+        return this.apiCall({
+            method: 'PATCH',
+            urlFragment: `${constants.DISPUTES}/${disputeId}`,
+            payload: payload,
+            headers: headers
+        });
+    }
+
+    /** Amazon Checkout v2 - Contest Dispute
+     *
+     * The contestDispute operation is used by the partner, on behalf of the merchant, to formally contest a dispute
+     * managed by Amazon, requiring the submission of necessary evidence files within the specified
+     * Dispute Window (11 days for Chargeback, 7 days for A-Z Claims).
+     *
+     * @param {String} disputeId - The dispute ID
+     * @param {Object} payload - The payload for the request
+     * @param {Object} [headers=null] - The headers for the request
+     *
+     */
+    contestDispute(disputeId, payload, headers) {
+        return this.apiCall({
+            method: 'POST',
+            urlFragment: `${constants.DISPUTES}/${disputeId}/${constants.CONTEXT}`,
+            payload: payload,
+            headers: headers
+        });
+    }
+
+    // ----------------------------------- File APIs -----------------------------------
+
+    /** Amazon Checkout v2 - Upload File
+     *
+     * The uploadFile operation is utilised by PSPs (Payment Service Provider) to upload file-based evidence when a
+     * merchant contests a dispute, providing the necessary reference ID to the evidence file as part of
+     * the Update Dispute API process.
+     *
+     * @param {Object} payload - The payload for the request
+     * @param {Object} headers - The headers for the request
+     *
+     */
+    uploadFile(payload, headers) {
+        return this.apiCall({
+            method: 'POST',
+            urlFragment: `${constants.FILES}`,
+            payload: payload,
             headers: headers
         });
     }
