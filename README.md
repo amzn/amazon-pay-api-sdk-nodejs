@@ -142,6 +142,7 @@ Please contact your Amazon Pay Account Manager before using the In-Store API cal
 ### Amazon Checkout v2 Dispute APIs
 
 * **createDispute**(payload,headers) &#8594; POST to `${version}/disputes`
+* **getDispute**(disputeId,headers= null) &#8594; GET to `${version}/disputes/${disputeId}`
 * **updateDispute**(disputeId,payload,headers = null) &#8594; PATCH to `${version}/disputes/${disputeId}`
 * **contestDispute**(disputeId, payload, headers= null) &#8594; POST to `${version}/disputes/${disputeId}/contest`
 
@@ -1137,6 +1138,32 @@ Example request method:
     
     const testPayClient = new Client.WebStoreClient(config);
     const response = testPayClient.createDispute(payload, headers);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Amazon Checkout v2 Dispute APIs - Get Dispute API
+
+```js
+const fs = require('fs');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+    
+    const disputeId = 'S01-0000000-0000000-B000000'
+    
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.getDispute(disputeId);
     
     response.then(function (result) {
         console.log(result.data);

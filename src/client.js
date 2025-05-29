@@ -596,6 +596,21 @@ class WebStoreClient extends AmazonPayClient {
         });
     }
 
+    /** Amazon Checkout v2 - Get Dispute
+     *
+     * The getDispute operation is used to retrieve details of a chargeback dispute associated with a specific order
+     *
+     * @param {String} disputeId - The dispute ID
+     * @param {Object} [headers=null] - The headers for the request
+     */
+    getDispute(disputeId, headers = null){
+        return this.apiCall({
+            method: 'GET',
+            urlFragment: `${constants.DISPUTES}/${disputeId}`,
+            headers: headers
+        })
+    }
+
     /** Amazon Checkout v2 - Update Dispute
      *
      * The updateDispute operation is used to notify Amazon of the closure status of a chargeback dispute initiated by a

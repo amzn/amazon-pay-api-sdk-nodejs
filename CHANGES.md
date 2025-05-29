@@ -1,3 +1,7 @@
+### Version 2.3.3 - May 2025
+* Introducing GetDispute API which is used to retrieve details of a chargeback dispute associated with a specific order
+* Introducing retry logic for HTTP Code 425
+
 ### Version 2.3.2 - February 2025
 * Introducing new v2 Dispute APIs for PSPs (Payment Service Provider). Buyers can create a dispute by filing an Amazon Pay A-to-z Guarantee claim or by filing a chargeback with their bank.
 * The `createDispute` API is used to notify Amazon of a newly created chargeback dispute by a buyer on a transaction processed by the PSP (Payment Service Provider), ensuring the dispute is properly accounted for in the Amazon Pay systems.

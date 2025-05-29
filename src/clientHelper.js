@@ -116,7 +116,7 @@ function retryLogic(options, count) {
     return response.then(function (result) {
         return result;
     }).catch(err => {
-        if (response.statusCode === 408 || response.statusCode === 429 || response.statusCode >= 500) {
+        if (response.statusCode === 408 || response.statusCode === 425 || response.statusCode === 429 || response.statusCode >= 500) {
             return this.retryLogic(options, count += 1);
         } else {
             return Promise.reject(err);

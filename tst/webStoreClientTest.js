@@ -917,7 +917,8 @@ describe('', () => {
                 this.skip();
             }
         });
-        const expectedDisputeResponseKeys =['disputeId', 'chargeId', 'providerMetadata', 'disputeType', 'disputeAmount', 'filingReason', 'resolutionAuthority', 'statusDetails', 'merchantResponseDeadline', 'releaseEnvironment'];
+
+        const expectedDisputeResponseKeys =['disputeId', 'chargeId', 'disputeType', 'disputeAmount', 'filingReason', 'resolutionAuthority', 'statusDetails', 'merchantResponseDeadline', 'releaseEnvironment'];
 
         function validateDisputeAPIResponse(result) {
             assert.strictEqual(result.status, 200);
@@ -928,21 +929,28 @@ describe('', () => {
             });
         }
 
-        it('Validating createDispute API',(done)=>{
+        it('Validating createDispute API', (done)=>{
             webStoreClient.createDispute(createDisputePayload, headers)
             .then(validateDisputeAPIResponse)
             .then(done)
             .catch(done);
         })
 
-        it('Validating updateDispute API',(done)=>{
+        it('Validating getDispute API', (done)=>{
+            webStoreClient.getDispute(disputeId,headers)
+                .then(validateDisputeAPIResponse)
+                .then(done)
+                .catch(done);
+        })
+
+        it('Validating updateDispute API', (done)=>{
             webStoreClient.updateDispute(disputeId,updateDisputePayload, headers)
             .then(validateDisputeAPIResponse)
             .then(done)
             .catch(done);
         })
 
-        it('Validating contestDispute API',(done)=>{
+        it('Validating contestDispute API', (done)=>{
             webStoreClient.contestDispute(disputeId,contestDisputePayload, headers)
                 .then(validateDisputeAPIResponse)
                 .then(done)
@@ -964,7 +972,7 @@ describe('', () => {
             });
         }
 
-        it('Validating FileUpload API',(done)=>{
+        it('Validating FileUpload API', (done)=>{
             webStoreClient.uploadFile(uploadFilePayload, headers)
                 .then(validateFileAPIResponse)
                 .then(done)
