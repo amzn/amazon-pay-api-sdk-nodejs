@@ -8,19 +8,20 @@ class AmazonPayClient {
         this.configArgs = Object.freeze(configArgs);
     }
 
-    /** API to process a request 
+    /** API to process a request
      *   - Makes an API Call using the specified options.
      * @param {Object} options - The options to make the API Call
+     * @param {Number} maxRedirects - Number of max redirects allowed
      * @param {String} options.method - The HTTP request method
      * @param {String} options.urlFragment - The URI for the API Call
      * @param {String} [options.payload=null] - The payload for the API Call
      * @param {Object} [options.headers=null] - The headers for the API Call
      * @param {Object} [options.queryParams=null] - The headers for the API Call
      **/
-    apiCall(options) {
+    apiCall(options, maxRedirects = constants.DEFAULT_REDIRECT) {
         const preparedOptions = helper.prepareOptions(this.configArgs, options);
         preparedOptions.headers = helper.signHeaders(this.configArgs, preparedOptions);
-        return helper.invokeApi(this.configArgs, preparedOptions);
+        return helper.invokeApi(this.configArgs, preparedOptions, maxRedirects);
     }
 
     /** Signs the request headers
@@ -529,7 +530,7 @@ class WebStoreClient extends AmazonPayClient {
         });
     }     
 
-    // ----------------------------------- Merchant Onboarding & Account Management APIs --------------------
+    // ----------------------------------- Merchant Onboarding & Account Management APIs for Authorised Merchants --------------------
 
     /**
      * Creates a non-logginable account for your merchant partners. These would be special accounts through which Merchants would not be able to login to Amazon or access Seller Central.
@@ -574,6 +575,55 @@ class WebStoreClient extends AmazonPayClient {
             urlFragment: `${constants.ACCOUNT_MANAGEMENT}/${merchantAccountId}`,
             headers: headers
         });
+    }
+
+    // ----------------------------------- Merchant Onboarding & Account Management APIs for Authorised Solution Providers -----------------------------------
+
+    /**
+     * Provide merchant info through this API to create loginable account for your merchant partners. Partners (Solution Providers) should expect either a success message or a detailed error message based on data validation and fulfillment..
+     *
+     * @param {Object} payload - The payload for the request
+     * @param {Object} [headers=null] - Optional custom headers for the request
+     */
+    createMerchantAccount(payload, headers = null) {
+        return this.apiCall({
+            method: 'POST',
+            urlFragment: `${constants.ACCOUNT_MANAGEMENT}`,
+            payload: payload,
+            headers: headers
+        });
+    }
+
+    /**
+     * Updates a merchant account and store for the given Amazon merchantAccountId. Partners(Solution Providers) are only able to update fields which do not change the legal business entity itself and till the account is claimed.
+     *
+     * @param {String} merchantAccountId - Internal Merchant Account ID
+     * @param {Object} payload - The payload for the request
+     * @param {Object} headers - The headers for the request
+     */
+    updateMerchantAccount(merchantAccountId, payload, headers) {
+        return this.apiCall({
+            method: 'PATCH',
+            urlFragment: `${constants.ACCOUNT_MANAGEMENT}/${merchantAccountId}`,
+            payload: payload,
+            headers: headers
+        });
+    }
+
+    /**
+     * Claims an existing merchant account using the provided Merchant Account ID.
+     *
+     * @param {String} merchantAccountId - Internal Merchant Account ID
+     * @param {Object} payload - The payload for the request
+     * @param {Object} [headers=null] - Optional custom headers for the request
+     */
+    merchantAccountClaim(merchantAccountId, payload, headers = null) {
+        return this.apiCall({
+            method: 'POST',
+            urlFragment: `${constants.ACCOUNT_MANAGEMENT}/${merchantAccountId}/claim`,
+            payload: payload,
+            headers: headers
+        }, 0);
     }
 
     // ----------------------------------- Dispute APIs -----------------------------------

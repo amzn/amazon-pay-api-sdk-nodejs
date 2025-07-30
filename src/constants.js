@@ -1,9 +1,10 @@
 'use strict';
 
 module.exports = {
-    SDK_VERSION: '2.3.3',
+    SDK_VERSION: '2.3.4',
     API_VERSION: 'v2',
     RETRIES: 3,
+    DEFAULT_REDIRECT: 5,
     API_ENDPOINTS: {
         na: 'pay-api.amazon.com',
         eu: 'pay-api.amazon.eu',

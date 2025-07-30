@@ -134,7 +134,7 @@ Please contact your Amazon Pay Account Manager before using the In-Store API cal
 ### Amazon Checkout v2 SPC
 * **finalizeCheckoutSession**(checkoutSessionId, payload, headers = null) &#8594; POST to `${version}/checkoutSessions/${checkoutSessionId}/finalize`
 
-### Amazon Checkout v2 Merchant Onboarding & Account Management APIs
+### Amazon Checkout v2 Merchant Onboarding & Account Management APIs for Authorised Merchants
 * **registerAmazonPayAccount**(payload, headers = null) &#8594; POST to `${version}/merchantAccounts`
 * **updateAmazonPayAccount**(merchantAccountId, payload, headers = null) &#8594; PATCH to `${version}/merchantAccounts/${merchantAccountId}`
 * **deleteAmazonPayAccount**(merchantAccountId, headers = null) &#8594; DELETE to `${version}/merchantAccounts/${merchantAccountId}`
@@ -148,6 +148,11 @@ Please contact your Amazon Pay Account Manager before using the In-Store API cal
 
 ### Amazon Checkout v2 File APIs
 * **uploadFile**($payload,headers) &#8594; POST to `${version}/files`
+
+### Amazon Checkout v2 Merchant Onboarding & Account Management APIs for Authorised Solution Providers
+* **createMerchantAccount**(payload, headers = null) &#8594 POST to `${version}/merchantAccounts`
+* **updateMerchantAccount**(merchantAccountId, payload, headers) &#8594 PATCH to `${version}/merchantAccounts/${merchantAccountId}`
+* **merchantAccountClaim**(merchantAccountId, payload, headers) &#8594 POST to `${version}/merchantAccounts/${merchantAccountId}/claim`
 
 # Using Convenience Functions
 
@@ -1273,6 +1278,205 @@ const fs = require('fs');
     
     response.then(function (result) {
         console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+### Amazon Checkout v2 Merchant Onboarding & Account Management APIs for Authorised Solution Providers - Create Merchant Account API
+
+```js
+    const fs = require('fs');
+    const uuidv4 = require('uuid/v4');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const payload = {
+        uniqueReferenceId: "Unique_Reference_Id",
+        ledgerCurrency: "JPY",
+        businessInfo: {
+            email: "abhi@abc.com",
+            businessType: "CORPORATE",
+            businessLegalName: "密林コーヒー",
+            businessCategory: "Beauty",
+            businessDisplayName: "Abhi's Cafe",
+            annualSalesVolume: {
+                amount: "100000",
+                currencyCode: "JPY"
+            },
+            countryOfEstablishment: "JP",
+            businessAddress: {
+                addressLine1: "扇町４丁目５－１",
+                addressLine2: "フルフィルメントセンタービル",
+                city: "小田原市",
+                stateOrRegion: "神奈川県",
+                postalCode: "250-0001",
+                countryCode: "JP",
+                phoneNumber: {
+                    countryCode: "81",
+                    number: "2062062061"
+                }
+            },
+            customerSupportInformation: {
+                customerSupportEmail: "test.merchant_abhi@abc.com",
+                customerSupportPhoneNumber: {
+                    countryCode: "1",
+                    number: "1234567",
+                    extension: "123"
+                }
+            }
+        },
+        beneficiaryOwners: [
+            {
+                personFullName: "Abhishek Kumar",
+                residentialAddress: {
+                    addressLine1: "扇町４丁目５－１",
+                    addressLine2: "フルフィルメントセンタービル",
+                    city: "小田原市",
+                    stateOrRegion: "神奈川県",
+                    postalCode: "250-0001",
+                    countryCode: "JP",
+                    phoneNumber: {
+                        countryCode: "81",
+                        number: "2062062061"
+                    }
+                }
+            }
+        ],
+        primaryContactPerson: {
+            personFullName: "Abhishek Kumar"
+        },
+        integrationInfo: {
+            ipnEndpointUrls: [
+                "https://yourdomainname.com/ipnendpoint1",
+                "https://yourdomainname.com/ipnendpoint2"
+            ]
+        },
+        stores: [
+            {
+                domainUrls: [
+                    "https://yourdomainname.com"
+                ],
+                storeName: "Rufus's Cafe",
+                privacyPolicyUrl: "https://yourdomainname.com/privacy",
+                storeStatus: {
+                    state: "ACTIVE",
+                    reasonCode: null
+                }
+            }
+        ],
+        merchantStatus: {
+            statusProvider: "Ayden",
+            state: "ACTIVE",
+            reasonCode: null
+        }
+    };
+    
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.createMerchantAccount(payload);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+### Amazon Checkout v2 Merchant Onboarding & Account Management APIs for Authorised Solution Providers - Update Merchant Account API
+
+```js
+    const fs = require('fs');
+    const uuidv4 = require('uuid/v4');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const payload = {
+        businessInfo: {
+            email: "abhi_updated@abc.com",
+            businessType: "CORPORATE",
+            businessLegalName: "密林コーヒー",
+            businessCategory: "Beauty",
+            businessDisplayName: "Abhi's Golden Cafe",
+            annualSalesVolume: {
+                amount: "500000",
+                currencyCode: "JPY"
+            },
+            countryOfEstablishment: "JP",
+            businessAddress: {
+                addressLine1: "扇町４丁目５－１",
+                addressLine2: "フルフィルメントセンタービル",
+                city: "小田原市",
+                stateOrRegion: "神奈川県",
+                postalCode: "250-0025",
+                countryCode: "JP",
+                phoneNumber: {
+                    countryCode: "81",
+                    number: "2062062065"
+                }
+            },
+            customerSupportInformation: {
+                customerSupportEmail: "test.merchant_abhi@abc.com",
+                customerSupportPhoneNumber: {
+                    countryCode: "1",
+                    number: "9999999",
+                    extension: "123"
+                }
+            }
+        }
+    };
+    
+    const headers = {
+        'x-amz-pay-authtoken': 'AUTH-TOKEN'
+    };
+    
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.updateMerchantAccount("AXXXXXXX",payload,headers);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+### Amazon Checkout v2 Merchant Onboarding & Account Management APIs for Authorised Solution Providers - Merchant Account Claim API
+
+```js
+    const fs = require('fs');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const payload = {
+        uniqueReferenceId: 'xxxxxxx-xxxx-xxxx-xxxx-xxxxxx'
+    };
+    
+    
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.merchantAccountClaim("AXXXXXXX",payload);
+    
+    response.then(function (result) {
+        console.log(result.data);
+        console.log('Location:', result.headers["location"]);
     }).catch(err => {
         console.log(err);
     });

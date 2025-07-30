@@ -27,14 +27,18 @@ function getAPIEndpointBaseURL(configArgs) {
         return constants.API_ENDPOINTS[constants.REGION_MAP[configArgs.region.toLowerCase()]];
 }
 
-function invokeApi(configArgs, apiOptions) {
+function invokeApi(configArgs, apiOptions, maxRedirects) {
 
     const options = {
         method: apiOptions.method,
         json: false,
         headers: apiOptions.headers,
         url: `https://${getAPIEndpointBaseURL(configArgs)}/${apiOptions.urlFragment}${getQueryString(apiOptions.queryParams)}`,
-        data: apiOptions.payload
+        data: apiOptions.payload,
+        maxRedirects: maxRedirects,
+        validateStatus: (status) => {
+            return (status >= 200 && status < 300) || (maxRedirects === 0 && status === 303);
+        }
     };
 
     const response = this.retryLogic(options, 1);

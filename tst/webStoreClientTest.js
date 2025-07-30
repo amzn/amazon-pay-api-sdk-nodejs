@@ -34,6 +34,8 @@ var refundId;
 var merchantAccountId;
 var reportScheduleId;
 var disputeId;
+var uniqueReferenceId;
+var authorizationToken;
 
 const createCheckoutSessionPayload = {
     webCheckoutDetails: {
@@ -260,6 +262,114 @@ const contestDisputePayload= {
 const uploadFilePayload = {
     "type" : "jpg",
     "purpose" : "disputeEvidence"
+};
+
+const createMerchantAccountPayload = {
+    uniqueReferenceId: "Hanabii-" + uuidv4(),
+    ledgerCurrency: "JPY",
+    businessInfo: {
+        email: "rufus-" + uuidv4() + "@abc.com",
+        businessType: "CORPORATE",
+        businessLegalName: "Kunal Mehta",
+        businessCategory: "Beauty",
+        businessDisplayName: "Rufus's Cafe",
+        annualSalesVolume: {
+            amount: "100000",
+            currencyCode: "JPY"
+        },
+        countryOfEstablishment: "JP",
+        businessAddress: {
+            addressLine1: "4-7, Sunny Mansion 203",
+            addressLine2: "Boren Ave",
+            city: "Chiryushi",
+            stateOrRegion: "AICHI",
+            postalCode: "4720021",
+            countryCode: "JP",
+            phoneNumber: {
+                countryCode: "81",
+                number: "2062062061"
+            }
+        },
+        customerSupportInformation: {
+            customerSupportEmail: "test.merchant-" + uuidv4() + "@abc.com",
+            customerSupportPhoneNumber: {
+                countryCode: "1",
+                number: "1234567",
+                extension: "123"
+            }
+        }
+    },
+    beneficiaryOwners: [
+        {
+            personId: "BO1",
+            personFullName: "Rufus Rufus",
+            residentialAddress: {
+                addressLine1: "4-7, Sunny Mansion 203",
+                addressLine2: "Boren Ave",
+                city: "Chiryushi",
+                stateOrRegion: "AICHI",
+                postalCode: "4720021",
+                countryCode: "JP",
+                phoneNumber: {
+                    countryCode: "81",
+                    number: "2062062061"
+                }
+            }
+        }
+    ],
+    primaryContactPerson: {
+        personFullName: "Rufus Rufus"
+    },
+    integrationInfo: {
+        ipnEndpointUrls: [
+            "https://cloudfront.net/ipnendpoint",
+            "https://cloudfront.net/ipnendpoint"
+        ]
+    },
+    stores: [
+        {
+            domainUrls: [
+                "https://www.rufus.com"
+            ],
+            storeName: "Rufus's Cafe",
+            privacyPolicyUrl: "http://www.rufus.com/privacy",
+            storeStatus: {
+                state: "Active"
+            }
+        }
+    ],
+    merchantStatus: {
+        statusProvider: "Ayden",
+        state: "ACTIVE",
+        reasonCode: null
+    }
+};
+
+const updateMerchantAccountPayload = {
+    businessInfo: {
+        email: "rufus-" + uuidv4() + "@abc.com",
+        businessType: "CORPORATE",
+        businessLegalName: "Kunal Mehta",
+        businessCategory: "Beauty",
+        businessDisplayName: "Rufus's Cafe",
+        annualSalesVolume: {
+            amount: "100000",
+            currencyCode: "JPY"
+        },
+        countryOfEstablishment: "JP",
+        businessAddress: {
+            addressLine1: "4-7, Sunny Mansion 203",
+            addressLine2: "Boren Ave",
+            city: "Chiryushi",
+            stateOrRegion: "AICHI",
+            postalCode: "4720021",
+            countryCode: "JP",
+            phoneNumber: {
+                countryCode: "81",
+                number: "2062062061"
+            }
+        }
+    }
 };
 
 function validateGetBuyerResponse(result) {
@@ -860,9 +970,9 @@ describe('', () => {
         });
     });
 
-    // ------------ Testing the Merchant Onboarding & Account Management APIs ---------------
+    // ------------ Testing the Merchant Onboarding & Account Management APIs for Authorised Merchants ---------------
 
-    describe('WebStore Client Test Cases - Merchant Onboarding & Account Management APIs', (done) => {
+    describe('WebStore Client Test Cases - Merchant Onboarding & Account Management APIs for Authorised Merchants ', (done) => {
 
         const expectedAmazonPayAccountResponse = {
             uniqueReferenceId: '',
@@ -905,6 +1015,68 @@ describe('', () => {
         testAmazonPayAccountOperations(createIndividualBusinessPayload, 'Individual Business Type');
         testAmazonPayAccountOperations(createCorporateBusinessPayload, 'Corporate Business Type and with Poc');
         testAmazonPayAccountOperations(createCorporateWithoutPocPayload, 'Corporate Business Type and without Poc');
+    });
+
+    // ------------ Testing the Merchant Onboarding & Account Management APIs for Authorised Solution Providers ---------------
+
+    describe('WebStore Client Test Cases - Merchant Onboarding & Account Management APIs for Authorised Solution Providers ', (done) => {
+
+        const expectedMerchantAccountResponseKeys = ['uniqueReferenceId', 'merchantAccountId'];
+
+        function validateResponse(result, expectedStatus) {
+            assert.strictEqual(result.status, expectedStatus);
+            const actualResponse = result.data;
+            expectedMerchantAccountResponseKeys.forEach(key => {
+                assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+            });
+            return actualResponse;
+        }
+
+        function validateCreateMerchantAccountResponse(result) {
+            const actualResponse = validateResponse(result, 201);
+            merchantAccountId = actualResponse.merchantAccountId;
+            uniqueReferenceId = actualResponse.uniqueReferenceId;
+            authorizationToken = actualResponse.authorizationToken;
+        }
+
+        function validateUpdateMerchantAccountResponse(result) {
+            validateResponse(result, 200);
+        }
+
+        function validateMerchantAccountClaimResponse(result) {
+            validateResponse(result, 303);
+        }
+
+        it('Validating createMerchantAccount API', (done) => {
+            webStoreClient.createMerchantAccount(createMerchantAccountPayload)
+                .then(validateCreateMerchantAccountResponse)
+                .then(done)
+                .catch(done);
+        })
+
+        it('Validating updateMerchantAccount API', (done) => {
+
+            const headers = {
+                'x-amz-pay-authtoken': authorizationToken
+            };
+
+            webStoreClient.updateMerchantAccount(merchantAccountId, updateMerchantAccountPayload, headers)
+                .then(validateUpdateMerchantAccountResponse)
+                .then(done)
+                .catch(done);
+        })
+
+        it('Validating merchantAccountClaim API', (done) => {
+
+            const merchantAccountClaimPayload = {
+                uniqueReferenceId: uniqueReferenceId
+            }
+
+            webStoreClient.merchantAccountClaim(merchantAccountId, merchantAccountClaimPayload)
+                .then(validateMerchantAccountClaimResponse)
+                .then(done)
+                .catch(done);
+        })
     });
 
     // ------------ Testing the Disputes APIs ---------------

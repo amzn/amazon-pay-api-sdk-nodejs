@@ -1,3 +1,9 @@
+### Version 2.3.4 - July 2025
+* Introducing new Account Management APIs that allow partners to programmatically onboard merchants onto the Amazon Pay.
+* The `createMerchantAccount` - Provide merchant info through this API to create loginable account for your merchant partners. Client should expect either a success message or a detailed error message based on data validation and fulfillment.
+* The `updateMerchantAccount` - Updates a merchant account and store for the given Amazon merchantAccountId. Partners are only able to update fields which do not change the legal business entity itself.
+* The `merchantAccountClaim` - Initiates the merchant account claim process. Clients should expect a redirection response or a detailed error message based on data validation and fulfillment.
+
 ### Version 2.3.3 - May 2025
 * Introducing GetDispute API which is used to retrieve details of a chargeback dispute associated with a specific order
 * Introducing retry logic for HTTP Code 425
