@@ -39,7 +39,7 @@ openssl rsa -in private.pem -pubout > public.pub
 The first command above generates a private key and the second line uses the private key to generate a public key.
 
 To associate the key with your account, follow the instructions here to
-[Get your Public Key ID](http://amazonpaycheckoutintegrationguide.s3.amazonaws.com/amazon-pay-checkout/get-set-up-for-integration.html#4-get-your-public-key-id).
+[Get your Public Key ID](https://developer.amazon.com/docs/amazon-pay-checkout/get-set-up-for-integration.html#5-get-your-public-key-id).
 
 ## Configuration
 
@@ -89,7 +89,7 @@ Please note that your solution provider account must have a pre-existing relatio
 * **getAuthorizationToken**(mwsAuthToken, merchantId, headers = null) &#8594; GET to `${version}/authorizationTokens/${mwsAuthToken}?merchantId=${merchantId}`
 
 ## Amazon Checkout v2 API
-[Checkout v2 Integration Guide](https://amazonpaycheckoutintegrationguide.s3.amazonaws.com/amazon-pay-api-v2/introduction.html)
+[Checkout v2 Integration Guide](https://developer.amazon.com/docs/amazon-pay-api-v2/introduction.html)
 
 The headers field is not optional for create/POST calls below because it requires, at a minimum, the x-amz-pay-idempotency-key header:
 
@@ -99,27 +99,28 @@ The headers field is not optional for create/POST calls below because it require
     };
 ```
 
-### Amazon Checkout v2 Buyer object
+### Amazon Checkout v2 Buyer APIs
 * **getBuyer**($buyerToken, $headers = null) &#8594; GET to `${version}/buyer/{$buyerToken}`
 
-### Checkout v2 CheckoutSession object
+### Checkout v2 CheckoutSession APIs
 * **createCheckoutSession**(payload, headers) &#8594; POST to `${version}/checkoutSessions`
 * **getCheckoutSession**(checkoutSessionId, headers = null) &#8594; GET to `${version}/checkoutSessions/${checkoutSessionId}`
 * **updateCheckoutSession**(checkoutSessionId, payload, headers = null) &#8594; PATCH to `${version}/checkoutSessions/${checkoutSessionId}`
 * **completeCheckoutSession**(checkoutSessionId, payload, headers = null) &#8594; POST to `${version}/checkoutSessions/${checkoutSessionId}/complete`
 
-### Checkout v2 ChargePermission object
+### Checkout v2 ChargePermission APIs
 * **getChargePermission**(chargePermissionId, headers = null) &#8594; GET to `${version}/chargePermissions/${chargePermissionId}`
 * **updateChargePermission**(chargePermissionId, payload, headers = null) &#8594; PATCH to `${version}/chargePermissions/${chargePermissionId}`
 * **closeChargePermission**(chargePermissionId, payload, headers = null) &#8594; DELETE to `${version}/chargePermissions/${chargePermissionId}/close`
 
-### Checkout v2 Charge object
+### Checkout v2 Charge APIs
 * **createCharge**(payload, headers) &#8594; POST to `${version}/charges`
 * **getCharge**(chargeId, headers = null) &#8594; GET to `${version}/charges/${chargeId}`
+* **updateCharge** (chargeId, payload, headers = null) &#8594; PATCH `${version}/charges/${chargeId}`
 * **captureCharge**(chargeId, payload, headers) &#8594; POST to `${version}/charges/${chargeId}/capture`
 * **cancelCharge**(chargeId, payload, headers = null) &#8594; DELETE to `${version}/charges/${chargeId}/cancel`
 
-### Checkout v2 Refund object
+### Checkout v2 Refund APIs
 * **createRefund**(payload, headers) &#8594; POST to `${version}/refunds`
 * **getRefund**(refundId, headers = null) &#8594; GET to `${version}/refunds/${refundId}`
 
@@ -133,10 +134,25 @@ Please contact your Amazon Pay Account Manager before using the In-Store API cal
 ### Amazon Checkout v2 SPC
 * **finalizeCheckoutSession**(checkoutSessionId, payload, headers = null) &#8594; POST to `${version}/checkoutSessions/${checkoutSessionId}/finalize`
 
-### Amazon Checkout v2 Merchant Onboarding & Account Management object
+### Amazon Checkout v2 Merchant Onboarding & Account Management APIs for Authorised Merchants
 * **registerAmazonPayAccount**(payload, headers = null) &#8594; POST to `${version}/merchantAccounts`
 * **updateAmazonPayAccount**(merchantAccountId, payload, headers = null) &#8594; PATCH to `${version}/merchantAccounts/${merchantAccountId}`
 * **deleteAmazonPayAccount**(merchantAccountId, headers = null) &#8594; DELETE to `${version}/merchantAccounts/${merchantAccountId}`
+
+### Amazon Checkout v2 Dispute APIs
+
+* **createDispute**(payload,headers) &#8594; POST to `${version}/disputes`
+* **getDispute**(disputeId,headers= null) &#8594; GET to `${version}/disputes/${disputeId}`
+* **updateDispute**(disputeId,payload,headers = null) &#8594; PATCH to `${version}/disputes/${disputeId}`
+* **contestDispute**(disputeId, payload, headers= null) &#8594; POST to `${version}/disputes/${disputeId}/contest`
+
+### Amazon Checkout v2 File APIs
+* **uploadFile**($payload,headers) &#8594; POST to `${version}/files`
+
+### Amazon Checkout v2 Merchant Onboarding & Account Management APIs for Authorised Solution Providers
+* **createMerchantAccount**(payload, headers = null) &#8594 POST to `${version}/merchantAccounts`
+* **updateMerchantAccount**(merchantAccountId, payload, headers) &#8594 PATCH to `${version}/merchantAccounts/${merchantAccountId}`
+* **merchantAccountClaim**(merchantAccountId, payload, headers) &#8594 POST to `${version}/merchantAccounts/${merchantAccountId}/claim`
 
 # Using Convenience Functions
 
@@ -505,6 +521,40 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 
     const testPayClient = new Client.WebStoreClient(config);
     const response = testPayClient.getCharge(chargeId);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Amazon Checkout v2 - Update Charge API
+**Please note that is API is supported only for PSPs (Payment Service Provider)**
+
+```js
+    const fs = require('fs');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const payload = {
+        "statusDetails": {
+            "state": "Canceled",
+            "reasonCode": "ExpiredUnused"
+        }
+    };
+    
+    const chargeId = "S01-0000000-0000000-C000000";
+
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.updateCharge(chargeId, payload);
     
     response.then(function (result) {
         console.log(result.data);
@@ -1050,6 +1100,383 @@ Example request method:
     
     response.then(function (result) {
         console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Amazon Checkout v2 Dispute APIs - Create Dispute API
+
+```js
+    const fs = require('fs');
+    const uuidv4 = require('uuid/v4');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const payload = {
+        'chargeId': 'S01-0000000-0000000-C000000',
+        'providerMetadata': {
+            'providerDisputeId': 'XXXXXXXXXXXX'
+        },
+        'disputeAmount': {
+            'amount': '1',
+            'currencyCode': 'JPY'
+        },
+        'filingReason': 'ProductNotReceived',
+        'filingTimestamp': Date.now(),
+        'statusDetails': {
+            'state': 'ActionRequired'
+        },
+        'merchantResponseDeadline': Date.now()+ (14 * 24 * 60 * 60 * 1000)
+    };
+
+    const headers = {
+        'x-amz-pay-idempotency-key': uuidv4().toString().replace(/-/g, '')
+    };
+    
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.createDispute(payload, headers);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Amazon Checkout v2 Dispute APIs - Get Dispute API
+
+```js
+const fs = require('fs');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+    
+    const disputeId = 'S01-0000000-0000000-B000000'
+    
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.getDispute(disputeId);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Amazon Checkout v2 Dispute APIs - Update Dispute API
+
+```js
+    const fs = require('fs');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const payload = {
+        "statusDetails": {
+            "resolution": "MerchantWon",
+            "state": "Resolved",
+            "reasonCode": "MerchantAcceptedDispute",
+            "reasonDescription": "Merchant accepted the dispute request"
+        },
+        "closureTimestamp": Date.now()
+    };
+
+    const disputeId = 'S01-0000000-0000000-B000000'
+    
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.updateDispute(disputeId,payload);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Amazon Checkout v2 Dispute APIs - Contest Dispute API
+
+```js
+    const fs = require('fs');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const payload = {
+        "merchantEvidences":  [
+            {
+                "evidenceType" : "TrackingNumber",
+                "fileId": "20ca8c0f-3778-1b5a-8598-3d38cfdc4bde",
+                "evidenceText": "raw text supporting merchant evidence"
+            }
+        ]
+    };
+
+    const disputeId = 'S01-0000000-0000000-B000000'
+    
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.contestDispute(disputeId,payload);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Amazon Checkout v2 File APIs - File API
+
+```js
+    const fs = require('fs');
+    const uuidv4 = require('uuid/v4');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const payload = {
+        "type" : "jpg",
+        "purpose" : "disputeEvidence"
+    };
+
+    const headers = {
+        'x-amz-pay-idempotency-key': uuidv4().toString().replace(/-/g, '')
+    };
+    
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.uploadFile(payload,headers);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+### Amazon Checkout v2 Merchant Onboarding & Account Management APIs for Authorised Solution Providers - Create Merchant Account API
+
+```js
+    const fs = require('fs');
+    const uuidv4 = require('uuid/v4');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const payload = {
+        uniqueReferenceId: "Unique_Reference_Id",
+        ledgerCurrency: "JPY",
+        businessInfo: {
+            email: "abhi@abc.com",
+            businessType: "CORPORATE",
+            businessLegalName: "密林コーヒー",
+            businessCategory: "Beauty",
+            businessDisplayName: "Abhi's Cafe",
+            annualSalesVolume: {
+                amount: "100000",
+                currencyCode: "JPY"
+            },
+            countryOfEstablishment: "JP",
+            businessAddress: {
+                addressLine1: "扇町４丁目５－１",
+                addressLine2: "フルフィルメントセンタービル",
+                city: "小田原市",
+                stateOrRegion: "神奈川県",
+                postalCode: "250-0001",
+                countryCode: "JP",
+                phoneNumber: {
+                    countryCode: "81",
+                    number: "2062062061"
+                }
+            },
+            customerSupportInformation: {
+                customerSupportEmail: "test.merchant_abhi@abc.com",
+                customerSupportPhoneNumber: {
+                    countryCode: "1",
+                    number: "1234567",
+                    extension: "123"
+                }
+            }
+        },
+        beneficiaryOwners: [
+            {
+                personFullName: "Abhishek Kumar",
+                residentialAddress: {
+                    addressLine1: "扇町４丁目５－１",
+                    addressLine2: "フルフィルメントセンタービル",
+                    city: "小田原市",
+                    stateOrRegion: "神奈川県",
+                    postalCode: "250-0001",
+                    countryCode: "JP",
+                    phoneNumber: {
+                        countryCode: "81",
+                        number: "2062062061"
+                    }
+                }
+            }
+        ],
+        primaryContactPerson: {
+            personFullName: "Abhishek Kumar"
+        },
+        integrationInfo: {
+            ipnEndpointUrls: [
+                "https://yourdomainname.com/ipnendpoint1",
+                "https://yourdomainname.com/ipnendpoint2"
+            ]
+        },
+        stores: [
+            {
+                domainUrls: [
+                    "https://yourdomainname.com"
+                ],
+                storeName: "Rufus's Cafe",
+                privacyPolicyUrl: "https://yourdomainname.com/privacy",
+                storeStatus: {
+                    state: "ACTIVE",
+                    reasonCode: null
+                }
+            }
+        ],
+        merchantStatus: {
+            statusProvider: "Ayden",
+            state: "ACTIVE",
+            reasonCode: null
+        }
+    };
+    
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.createMerchantAccount(payload);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+### Amazon Checkout v2 Merchant Onboarding & Account Management APIs for Authorised Solution Providers - Update Merchant Account API
+
+```js
+    const fs = require('fs');
+    const uuidv4 = require('uuid/v4');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const payload = {
+        businessInfo: {
+            email: "abhi_updated@abc.com",
+            businessType: "CORPORATE",
+            businessLegalName: "密林コーヒー",
+            businessCategory: "Beauty",
+            businessDisplayName: "Abhi's Golden Cafe",
+            annualSalesVolume: {
+                amount: "500000",
+                currencyCode: "JPY"
+            },
+            countryOfEstablishment: "JP",
+            businessAddress: {
+                addressLine1: "扇町４丁目５－１",
+                addressLine2: "フルフィルメントセンタービル",
+                city: "小田原市",
+                stateOrRegion: "神奈川県",
+                postalCode: "250-0025",
+                countryCode: "JP",
+                phoneNumber: {
+                    countryCode: "81",
+                    number: "2062062065"
+                }
+            },
+            customerSupportInformation: {
+                customerSupportEmail: "test.merchant_abhi@abc.com",
+                customerSupportPhoneNumber: {
+                    countryCode: "1",
+                    number: "9999999",
+                    extension: "123"
+                }
+            }
+        }
+    };
+    
+    const headers = {
+        'x-amz-pay-authtoken': 'AUTH-TOKEN'
+    };
+    
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.updateMerchantAccount("AXXXXXXX",payload,headers);
+    
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+### Amazon Checkout v2 Merchant Onboarding & Account Management APIs for Authorised Solution Providers - Merchant Account Claim API
+
+```js
+    const fs = require('fs');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: true,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const payload = {
+        uniqueReferenceId: 'xxxxxxx-xxxx-xxxx-xxxx-xxxxxx'
+    };
+    
+    
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.merchantAccountClaim("AXXXXXXX",payload);
+    
+    response.then(function (result) {
+        console.log(result.data);
+        console.log('Location:', result.headers["location"]);
     }).catch(err => {
         console.log(err);
     });

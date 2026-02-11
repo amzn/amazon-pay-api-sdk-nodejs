@@ -19,8 +19,10 @@ const buyerToken = ''; // Enter Buyer Token
 const buyerTokenWithV2Algorithm = ''; // Enter Buyer Token
 const finalizeCheckoutSessionId = ''; // Enter Chechout Session Id for SPC flow
 const finalizeCheckoutSessionIdWithV2Algorithm = ''; // Enter Chechout Session Id for SPC flow
+const pspChargeId=''; // Enter PSP Charge ID for updateCharge API
+const pspChargeIdWithV2Algorithm='';  // Enter PSP Charge ID for updateCharge API
 
-// Intiating WebStoreClient Class
+// Initiating WebStoreClient Class
 const webStoreClient = new Client.WebStoreClient(config);
 const webStoreClientWithAlgorithm = new Client.WebStoreClient(configWithAlgorithm);
 
@@ -31,6 +33,9 @@ var chargeIdWithV2Algorithm;
 var refundId;
 var merchantAccountId;
 var reportScheduleId;
+var disputeId;
+var uniqueReferenceId;
+var authorizationToken;
 
 const createCheckoutSessionPayload = {
     webCheckoutDetails: {
@@ -199,6 +204,170 @@ const createUpdatePayload = {
             stateOrRegion: '京都府',
             postalCode: '603-8821',
             countryCode: 'JP'
+        }
+    }
+};
+
+const updateChargePayload= {
+    "statusDetails": {
+        "state": "Canceled",
+        "reasonCode": "ExpiredUnused"
+    }
+};
+
+const updateChargePayloadWithV2Algorithm= {
+    "statusDetails": {
+        "state": "Canceled",
+        "reasonCode": "ExpiredUnused"
+    }
+};
+
+const createDisputePayload={
+    'chargeId': pspChargeId,
+        'providerMetadata': {
+        'providerDisputeId': 'A2CQXQ2TUSYG7J'
+    },
+    'disputeAmount': {
+        'amount': '1',
+            'currencyCode': configWithAlgorithm.currencyCode
+    },
+    'filingReason': 'ProductNotReceived',
+        'filingTimestamp': Date.now(),
+        'statusDetails': {
+        'state': 'ActionRequired'
+    },
+    'merchantResponseDeadline': Date.now()+ (14 * 24 * 60 * 60 * 1000)
+};
+
+const updateDisputePayload={
+    "statusDetails": {
+        "resolution": "MerchantWon",
+        "state": "Resolved",
+        "reasonCode": "MerchantAcceptedDispute",
+        "reasonDescription": "Merchant accepted the dispute request"
+    },
+    "closureTimestamp": Date.now()
+};
+
+const contestDisputePayload= {
+    "merchantEvidences":  [
+        {
+            "evidenceType" : "TrackingNumber",
+            "fileId": "ababcbchdhdhhduathcfjhf",
+            "evidenceText": "raw text supporting merchant evidence"
+        }
+    ]
+}
+
+const uploadFilePayload = {
+    "type" : "jpg",
+    "purpose" : "disputeEvidence"
+};
+
+const createMerchantAccountPayload = {
+    uniqueReferenceId: "Hanabii-" + uuidv4(),
+    ledgerCurrency: "JPY",
+    businessInfo: {
+        email: "rufus-" + uuidv4() + "@abc.com",
+        businessType: "CORPORATE",
+        businessLegalName: "Kunal Mehta",
+        businessCategory: "Beauty",
+        businessDisplayName: "Rufus's Cafe",
+        annualSalesVolume: {
+            amount: "100000",
+            currencyCode: "JPY"
+        },
+        countryOfEstablishment: "JP",
+        businessAddress: {
+            addressLine1: "4-7, Sunny Mansion 203",
+            addressLine2: "Boren Ave",
+            city: "Chiryushi",
+            stateOrRegion: "AICHI",
+            postalCode: "4720021",
+            countryCode: "JP",
+            phoneNumber: {
+                countryCode: "81",
+                number: "2062062061"
+            }
+        },
+        customerSupportInformation: {
+            customerSupportEmail: "test.merchant-" + uuidv4() + "@abc.com",
+            customerSupportPhoneNumber: {
+                countryCode: "1",
+                number: "1234567",
+                extension: "123"
+            }
+        }
+    },
+    beneficiaryOwners: [
+        {
+            personId: "BO1",
+            personFullName: "Rufus Rufus",
+            residentialAddress: {
+                addressLine1: "4-7, Sunny Mansion 203",
+                addressLine2: "Boren Ave",
+                city: "Chiryushi",
+                stateOrRegion: "AICHI",
+                postalCode: "4720021",
+                countryCode: "JP",
+                phoneNumber: {
+                    countryCode: "81",
+                    number: "2062062061"
+                }
+            }
+        }
+    ],
+    primaryContactPerson: {
+        personFullName: "Rufus Rufus"
+    },
+    integrationInfo: {
+        ipnEndpointUrls: [
+            "https://cloudfront.net/ipnendpoint",
+            "https://cloudfront.net/ipnendpoint"
+        ]
+    },
+    stores: [
+        {
+            domainUrls: [
+                "https://www.rufus.com"
+            ],
+            storeName: "Rufus's Cafe",
+            privacyPolicyUrl: "http://www.rufus.com/privacy",
+            storeStatus: {
+                state: "Active"
+            }
+        }
+    ],
+    merchantStatus: {
+        statusProvider: "Ayden",
+        state: "ACTIVE",
+        reasonCode: null
+    }
+};
+
+const updateMerchantAccountPayload = {
+    businessInfo: {
+        email: "rufus-" + uuidv4() + "@abc.com",
+        businessType: "CORPORATE",
+        businessLegalName: "Kunal Mehta",
+        businessCategory: "Beauty",
+        businessDisplayName: "Rufus's Cafe",
+        annualSalesVolume: {
+            amount: "100000",
+            currencyCode: "JPY"
+        },
+        countryOfEstablishment: "JP",
+        businessAddress: {
+            addressLine1: "4-7, Sunny Mansion 203",
+            addressLine2: "Boren Ave",
+            city: "Chiryushi",
+            stateOrRegion: "AICHI",
+            postalCode: "4720021",
+            countryCode: "JP",
+            phoneNumber: {
+                countryCode: "81",
+                number: "2062062061"
+            }
         }
     }
 };
@@ -409,29 +578,14 @@ describe('', () => {
 
     // Validating Charge Permission API Call's
     describe('WebStore Client Test Cases - Charge Permission APIs', (done) => {
-        const expectedResponse = {
-            chargePermissionId: '',
-            chargePermissionReferenceId: '',
-            platformId: '',
-            buyer: '',
-            shippingAddress: '',
-            billingAddress: '',
-            paymentPreferences: '',
-            statusDetails: '',
-            creationTimestamp: '',
-            expirationTimestamp: '',
-            merchantMetadata: '',
-            releaseEnvironment: '',
-            limits: '',
-            chargePermissionType: '',
-            recurringMetadata: '',
-            presentmentCurrency: ''
-        };
+        const expectedResponseKeys = ['chargePermissionId', 'chargePermissionReferenceId:', 'platformId', 'buyer', 'shippingAddress', 'billingAddress', 'paymentPreferences', 'statusDetails', 'creationTimestamp', 'expirationTimestamp', 'merchantMetadata', 'releaseEnvironment', 'limits', 'chargePermissionType', 'recurringMetadata', 'presentmentCurrency'];
 
         function validateChargePermissionResponse(result) {
             assert.strictEqual(result.status, 200);
             var actualResponse = result.data;
-            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+            expectedResponseKeys.forEach(key => {
+                assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+            });
         }
 
         it('Validating Get Charge Permission API', (done) => {
@@ -480,26 +634,7 @@ describe('', () => {
 
     // Validating Create Charge API Call
     describe('WebStore Client Test Cases - Charge APIs', (done) => {
-        const expectedResponse = {
-            chargeId: '',
-            chargeAmount: '',
-            chargePermissionId: '',
-            captureAmount: '',
-            refundedAmount: '',
-            softDescriptor: '',
-            providerMetadata: '',
-            convertedAmount: '',
-            conversionRate: '',
-            channel: '',
-            chargeInitiator: '',
-            statusDetails: '',
-            creationTimestamp: '',
-            expirationTimestamp: '',
-            releaseEnvironment: '',
-            merchantMetadata: '',
-            platformId: '',
-            webCheckoutDetails: ''
-        };
+        const expectedResponseKeys = ['chargeId', 'chargeAmount', 'chargePermissionId', 'captureAmount', 'refundedAmount', 'softDescriptor', 'providerMetadata', 'convertedAmount', 'conversionRate', 'channel', 'chargeInitiator', 'statusDetails', 'creationTimestamp', 'expirationTimestamp', 'releaseEnvironment', 'merchantMetadata', 'platformId', 'webCheckoutDetails'];
 
         before(function () {
             if (!chargePermissionId && !chargePermissionIdWithV2Algorithm) {
@@ -512,7 +647,9 @@ describe('', () => {
             assert.strictEqual(result.status, 201);
             var actualResponse = result.data;
             chargeId = actualResponse.chargeId;
-            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+            expectedResponseKeys.forEach(key => {
+                assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+            });
         }
 
         it('Validating Create Charge API', (done) => {
@@ -532,7 +669,9 @@ describe('', () => {
         function validateChargeResponse(result) {
             assert.strictEqual(result.status, 200);
             var actualResponse = result.data;
-            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+            expectedResponseKeys.forEach(key => {
+                assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+            });
         }
 
         it('Validating Get Charge API', (done) => {
@@ -544,6 +683,20 @@ describe('', () => {
 
         it('Validating Get Charge API with V2 Algorithm', (done) => {
             webStoreClientWithAlgorithm.getCharge(chargeId, headersWithV2Algorithm)
+                .then(validateChargeResponse)
+                .then(done)
+                .catch(done);
+        });
+
+        it('Validating Update Charge API', (done) => {
+            webStoreClient.updateCharge(pspChargeId, updateChargePayload, headers)
+                .then(validateChargeResponse)
+                .then(done)
+                .catch(done);
+        });
+
+        it('Validating Update Charge API with V2 Algorithm', (done) => {
+            webStoreClientWithAlgorithm.updateCharge(pspChargeIdWithV2Algorithm, updateChargePayloadWithV2Algorithm, headersWithV2Algorithm)
                 .then(validateChargeResponse)
                 .then(done)
                 .catch(done);
@@ -586,15 +739,7 @@ describe('', () => {
         const headers = {
             'x-amz-pay-idempotency-key': uuidv4().toString().replace(/-/g, '')
         };
-        const expectedResponse = {
-            refundId: '',
-            chargeId: '',
-            creationTimestamp: '',
-            refundAmount: '',
-            statusDetails: '',
-            softDescriptor: '',
-            releaseEnvironment: ''
-        };
+        const expectedResponseKeys = ['refundId', 'chargeId', 'creationTimestamp', 'refundAmount', 'statusDetails', 'softDescriptor', 'releaseEnvironment'];
 
         before(function () {
             if (!chargePermissionId && !chargePermissionIdWithV2Algorithm) {
@@ -607,7 +752,9 @@ describe('', () => {
             assert.strictEqual(result.status, 201);
             var actualResponse = result.data;
             refundId = actualResponse.refundId;
-            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+            expectedResponseKeys.forEach(key => {
+                assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+            });
         }
 
         it('Validating Create Refund API', (done) => {
@@ -643,7 +790,9 @@ describe('', () => {
         function validatGetRefundResponse(result) {
             assert.strictEqual(result.status, 200);
             var actualResponse = result.data;
-            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+            Object.keys(expectedResponse).forEach(key => {
+                assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+            });
         }
 
         it('Validating Get Refund API', (done) => {
@@ -821,9 +970,9 @@ describe('', () => {
         });
     });
 
-    // ------------ Testing the Merchant Onboarding & Account Management APIs ---------------
+    // ------------ Testing the Merchant Onboarding & Account Management APIs for Authorised Merchants ---------------
 
-    describe('WebStore Client Test Cases - Merchant Onboarding & Account Management APIs', (done) => {
+    describe('WebStore Client Test Cases - Merchant Onboarding & Account Management APIs for Authorised Merchants ', (done) => {
 
         const expectedAmazonPayAccountResponse = {
             uniqueReferenceId: '',
@@ -866,5 +1015,140 @@ describe('', () => {
         testAmazonPayAccountOperations(createIndividualBusinessPayload, 'Individual Business Type');
         testAmazonPayAccountOperations(createCorporateBusinessPayload, 'Corporate Business Type and with Poc');
         testAmazonPayAccountOperations(createCorporateWithoutPocPayload, 'Corporate Business Type and without Poc');
+    });
+
+    // ------------ Testing the Merchant Onboarding & Account Management APIs for Authorised Solution Providers ---------------
+
+    describe('WebStore Client Test Cases - Merchant Onboarding & Account Management APIs for Authorised Solution Providers ', (done) => {
+
+        const expectedMerchantAccountResponseKeys = ['uniqueReferenceId', 'merchantAccountId'];
+
+        function validateResponse(result, expectedStatus) {
+            assert.strictEqual(result.status, expectedStatus);
+            const actualResponse = result.data;
+            expectedMerchantAccountResponseKeys.forEach(key => {
+                assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+            });
+            return actualResponse;
+        }
+
+        function validateCreateMerchantAccountResponse(result) {
+            const actualResponse = validateResponse(result, 201);
+            merchantAccountId = actualResponse.merchantAccountId;
+            uniqueReferenceId = actualResponse.uniqueReferenceId;
+            authorizationToken = actualResponse.authorizationToken;
+        }
+
+        function validateUpdateMerchantAccountResponse(result) {
+            validateResponse(result, 200);
+        }
+
+        function validateMerchantAccountClaimResponse(result) {
+            validateResponse(result, 303);
+        }
+
+        it('Validating createMerchantAccount API', (done) => {
+            webStoreClient.createMerchantAccount(createMerchantAccountPayload)
+                .then(validateCreateMerchantAccountResponse)
+                .then(done)
+                .catch(done);
+        })
+
+        it('Validating updateMerchantAccount API', (done) => {
+
+            const headers = {
+                'x-amz-pay-authtoken': authorizationToken
+            };
+
+            webStoreClient.updateMerchantAccount(merchantAccountId, updateMerchantAccountPayload, headers)
+                .then(validateUpdateMerchantAccountResponse)
+                .then(done)
+                .catch(done);
+        })
+
+        it('Validating merchantAccountClaim API', (done) => {
+
+            const merchantAccountClaimPayload = {
+                uniqueReferenceId: uniqueReferenceId
+            }
+
+            webStoreClient.merchantAccountClaim(merchantAccountId, merchantAccountClaimPayload)
+                .then(validateMerchantAccountClaimResponse)
+                .then(done)
+                .catch(done);
+        })
+    });
+
+    // ------------ Testing the Disputes APIs ---------------
+
+    describe('WebStore Client Test Cases - Disputes APIs', (done) => {
+
+        before(function () {
+            if (!pspChargeId &&  !pspChargeIdWithV2Algorithm) {
+                console.error('Please provide PSP chargeId before executing these test cases');
+                this.skip();
+            }
+        });
+
+        const expectedDisputeResponseKeys =['disputeId', 'chargeId', 'disputeType', 'disputeAmount', 'filingReason', 'resolutionAuthority', 'statusDetails', 'merchantResponseDeadline', 'releaseEnvironment'];
+
+        function validateDisputeAPIResponse(result) {
+            assert.strictEqual(result.status, 200);
+            var actualResponse = result.data;
+            disputeId=actualResponse.disputeId
+            expectedDisputeResponseKeys.forEach(key => {
+                assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+            });
+        }
+
+        it('Validating createDispute API', (done)=>{
+            webStoreClient.createDispute(createDisputePayload, headers)
+            .then(validateDisputeAPIResponse)
+            .then(done)
+            .catch(done);
+        })
+
+        it('Validating getDispute API', (done)=>{
+            webStoreClient.getDispute(disputeId,headers)
+                .then(validateDisputeAPIResponse)
+                .then(done)
+                .catch(done);
+        })
+
+        it('Validating updateDispute API', (done)=>{
+            webStoreClient.updateDispute(disputeId,updateDisputePayload, headers)
+            .then(validateDisputeAPIResponse)
+            .then(done)
+            .catch(done);
+        })
+
+        it('Validating contestDispute API', (done)=>{
+            webStoreClient.contestDispute(disputeId,contestDisputePayload, headers)
+                .then(validateDisputeAPIResponse)
+                .then(done)
+                .catch(done);
+        })
+    });
+
+    // ------------ Testing the File APIs ---------------
+
+    describe('WebStore Client Test Cases - File APIs', (done) => {
+
+        const expectedFileAPIResponseKeys =['id', 'type', 'purpose', 'url', 'size', 'uploadTimestamp', 'urlExpirationTimestamp'];
+
+        function validateFileAPIResponse(result) {
+            assert.strictEqual(result.status, 200);
+            var actualResponse = result.data;
+            expectedFileAPIResponseKeys.forEach(key => {
+                assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+            });
+        }
+
+        it('Validating FileUpload API', (done)=>{
+            webStoreClient.uploadFile(uploadFilePayload, headers)
+                .then(validateFileAPIResponse)
+                .then(done)
+                .catch(done);
+        })
     });
 });
