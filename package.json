@@ -5,12 +5,16 @@
   "main": "src/client.js",
   "directories": {},
   "dependencies": {
-    "axios": "1.8.2",
-    "uuid": "^3.3.3"
+    "axios": "1.16.0",
+    "uuid": "11.1.1"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
-    "mocha": "^10.0.0"
+    "chai": "4.5.0",
+    "mocha": "11.7.6"
+  },
+  "overrides": {
+    "diff": "8.0.3",
+    "serialize-javascript": "7.0.5"
   },
   "scripts": {
     "test": "mocha tst/ --timeout 15000"

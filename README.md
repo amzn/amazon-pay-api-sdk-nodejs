@@ -244,7 +244,7 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 
 ``` js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { v4: uuidv4 } = require('uuid');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -468,7 +468,7 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 ## Checkout v2 - Create Charge API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { v4: uuidv4 } = require('uuid');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -567,7 +567,7 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 
 ``` js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { v4: uuidv4 } = require('uuid');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -634,7 +634,7 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 
 ``` js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { v4: uuidv4 } = require('uuid');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -716,7 +716,7 @@ Example call to generateButtonSignature function:
 
 ``` js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { v4: uuidv4 } = require('uuid');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -843,7 +843,7 @@ Example request method:
 ## Amazon Checkout v2 Reporting APIs - GetReport API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { v4: uuidv4 } = require('uuid');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -870,7 +870,7 @@ Example request method:
 ## Amazon Checkout v2 Reporting APIs - GetReportById API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { v4: uuidv4 } = require('uuid');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -895,7 +895,7 @@ Example request method:
 ## Amazon Checkout v2 Reporting APIs - GetReportDocument API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { v4: uuidv4 } = require('uuid');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -920,7 +920,7 @@ Example request method:
 ## Amazon Checkout v2 Reporting APIs - GetReportSchedules API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { v4: uuidv4 } = require('uuid');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -945,7 +945,7 @@ Example request method:
 ## Amazon Checkout v2 Reporting APIs - GetReportScheduleById API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { v4: uuidv4 } = require('uuid');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -970,7 +970,7 @@ Example request method:
 ## Amazon Checkout v2 Reporting APIs - CreateReport API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { v4: uuidv4 } = require('uuid');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -999,7 +999,7 @@ Example request method:
 ## Amazon Checkout v2 Reporting APIs - CreateReportSchedule API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { v4: uuidv4 } = require('uuid');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -1029,7 +1029,7 @@ Example request method:
 ## Amazon Checkout v2 Reporting APIs - CancelReportSchedule API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { v4: uuidv4 } = require('uuid');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -1054,7 +1054,7 @@ Example request method:
 ## Amazon Checkout v2 SPC - Finalize Checkout Session API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { v4: uuidv4 } = require('uuid');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -1109,7 +1109,7 @@ Example request method:
 
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { v4: uuidv4 } = require('uuid');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -1253,7 +1253,7 @@ const fs = require('fs');
 
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { v4: uuidv4 } = require('uuid');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -1287,7 +1287,7 @@ const fs = require('fs');
 
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { v4: uuidv4 } = require('uuid');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -1392,7 +1392,7 @@ const fs = require('fs');
 
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { v4: uuidv4 } = require('uuid');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {

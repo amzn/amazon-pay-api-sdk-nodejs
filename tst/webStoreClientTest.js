@@ -5,7 +5,7 @@ const Client = require('../src/client');
 const config = require('./config');
 const configWithAlgorithm = require('./configWithAlgorithm');
 const assert = require('assert');
-const uuidv4 = require('uuid/v4');
+const { v4: uuidv4 } = require('uuid');
 const headers = {
     'x-amz-pay-idempotency-key': uuidv4().toString().replace(/-/g, '')
 };
