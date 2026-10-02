@@ -1,3 +1,13 @@
+### Version 2.3.6 - October 2026
+* Fixed TLS certificate verification handling when `overrideServiceUrl` is configured. Relaxed verification now applies only to requests sent to the override endpoint and no longer changes process-wide TLS settings.
+* Upgraded `axios` to 1.20.0 to address security advisories in `axios` and its dependencies (`form-data`, `follow-redirects`).
+* Removed the unused `uuid` dependency. Code samples now generate idempotency keys with Node's built-in `crypto.randomUUID()`.
+
+### Version 2.3.5 - July 2026
+* Introducing `createStore` and `updateStore` APIs for managing stores within merchant accounts
+* These APIs allow Solution Providers to configure store-specific settings (allowed domains, redirect URLs, store name, privacy policy URL) on behalf of their merchants
+* Note: These APIs are restricted to allowlisted Solution Providers only
+
 ### Version 2.3.4 - July 2025
 * Introducing new Account Management APIs that allow partners to programmatically onboard merchants onto the Amazon Pay.
 * The `createMerchantAccount` - Provide merchant info through this API to create loginable account for your merchant partners. Client should expect either a success message or a detailed error message based on data validation and fulfillment.

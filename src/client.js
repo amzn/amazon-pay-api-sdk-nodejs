@@ -700,6 +700,49 @@ class WebStoreClient extends AmazonPayClient {
         });
     }
 
+    // ----------------------------------- Store Management APIs -----------------------------------
+
+    /** Amazon Checkout v2 - Create Store
+     *
+     * Creates a new store for a merchant account. Allows Solution Providers to configure
+     * store-specific settings like allowed domains, redirect URLs, store name, and privacy policy URL
+     * on behalf of their merchants.
+     * Note: This API is restricted to allowlisted Solution Providers only.
+     *
+     * @param {String} merchantAccountId - The merchant account Id
+     * @param {Object} payload - The payload for the request
+     * @param {Object} headers - The headers for the request (requires x-amz-pay-authToken)
+     */
+    createStore(merchantAccountId, payload, headers) {
+        return this.apiCall({
+            method: 'POST',
+            urlFragment: `${constants.ACCOUNT_MANAGEMENT}/${merchantAccountId}/${constants.STORES}`,
+            payload: payload,
+            headers: headers
+        });
+    }
+
+    /** Amazon Checkout v2 - Update Store
+     *
+     * Updates an existing store's configuration for a merchant account. Allows Solution Providers to
+     * modify store-specific settings like allowed domains, redirect URLs, store name, and privacy policy URL
+     * on behalf of their merchants.
+     * Note: This API is restricted to allowlisted Solution Providers only.
+     *
+     * @param {String} merchantAccountId - The merchant account Id
+     * @param {String} storeId - The store Id
+     * @param {Object} payload - The payload for the request
+     * @param {Object} headers - The headers for the request (requires x-amz-pay-authToken)
+     */
+    updateStore(merchantAccountId, storeId, payload, headers) {
+        return this.apiCall({
+            method: 'PATCH',
+            urlFragment: `${constants.ACCOUNT_MANAGEMENT}/${merchantAccountId}/${constants.STORES}/${storeId}`,
+            payload: payload,
+            headers: headers
+        });
+    }
+
     // ----------------------------------- File APIs -----------------------------------
 
     /** Amazon Checkout v2 - Upload File

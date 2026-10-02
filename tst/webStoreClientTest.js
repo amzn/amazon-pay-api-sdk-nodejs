@@ -5,7 +5,7 @@ const Client = require('../src/client');
 const config = require('./config');
 const configWithAlgorithm = require('./configWithAlgorithm');
 const assert = require('assert');
-const uuidv4 = require('uuid/v4');
+const { randomUUID: uuidv4 } = require('crypto');
 const headers = {
     'x-amz-pay-idempotency-key': uuidv4().toString().replace(/-/g, '')
 };
@@ -372,6 +372,20 @@ const updateMerchantAccountPayload = {
     }
 };
 
+const createStorePayload = {
+    allowedOriginDomains: ['https://example-nodejs-test.com', 'https://www.example-nodejs-test.com'],
+    allowedRedirectURLs: ['https://example-nodejs-test.com/return', 'https://example-nodejs-test.com/cancel'],
+    storeName: 'NodeJS SDK Integration Test Store',
+    privacyPolicyUrl: 'https://example-nodejs-test.com/privacy'
+};
+
+const updateStorePayload = {
+    allowedOriginDomains: ['https://updated-nodejs-test.com', 'https://www.updated-nodejs-test.com'],
+    allowedRedirectURLs: ['https://updated-nodejs-test.com/return', 'https://updated-nodejs-test.com/cancel'],
+    storeName: 'NodeJS SDK Updated Integration Test Store',
+    privacyPolicyUrl: 'https://updated-nodejs-test.com/privacy'
+};
+
 function validateGetBuyerResponse(result) {
     assert.strictEqual(result.status, 200);
     var actualResponse = result.data;
@@ -436,7 +450,10 @@ describe('WebStore Client Test Cases - Checkout Session APIs', () => {
         assert.strictEqual(result.status, 201);
             var actualResponse = result.data;
             checkoutSessionId = actualResponse.checkoutSessionId;
-            assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+            // Check required keys are present; the API may add new fields over time
+            Object.keys(expectedResponse).forEach(key => {
+                assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+            });
     }
 
     it('Validating Create Checkout Session API', (done) => {
@@ -500,7 +517,10 @@ describe('WebStore Client Test Cases - Checkout Session APIs', () => {
     function validateCheckoutSessionResponse(result) {
         assert.strictEqual(result.status, 200);
         var actualResponse = result.data;
-        assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+        // Check required keys are present; the API may add new fields over time
+        Object.keys(expectedResponse).forEach(key => {
+            assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+        });
     }    
 });
 
@@ -547,7 +567,10 @@ describe('WebStore Client Test Cases - Finalize Checkout Session APIs', () => {
     function validateCheckoutSessionResponse(result) {
         assert.strictEqual(result.status, 200);
         var actualResponse = result.data;
-        assert.deepStrictEqual(Object.keys(expectedResponse), Object.keys(actualResponse));
+        // Check required keys are present; the API may add new fields over time
+        Object.keys(expectedResponse).forEach(key => {
+            assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+        });
     }
     
     // Test for finalizeCheckoutSession with V1 Algorithm
@@ -578,7 +601,7 @@ describe('', () => {
 
     // Validating Charge Permission API Call's
     describe('WebStore Client Test Cases - Charge Permission APIs', (done) => {
-        const expectedResponseKeys = ['chargePermissionId', 'chargePermissionReferenceId:', 'platformId', 'buyer', 'shippingAddress', 'billingAddress', 'paymentPreferences', 'statusDetails', 'creationTimestamp', 'expirationTimestamp', 'merchantMetadata', 'releaseEnvironment', 'limits', 'chargePermissionType', 'recurringMetadata', 'presentmentCurrency'];
+        const expectedResponseKeys = ['chargePermissionId', 'chargePermissionReferenceId', 'platformId', 'buyer', 'shippingAddress', 'billingAddress', 'paymentPreferences', 'statusDetails', 'creationTimestamp', 'expirationTimestamp', 'merchantMetadata', 'releaseEnvironment', 'limits', 'chargePermissionType', 'recurringMetadata', 'presentmentCurrency'];
 
         function validateChargePermissionResponse(result) {
             assert.strictEqual(result.status, 200);
@@ -790,7 +813,7 @@ describe('', () => {
         function validatGetRefundResponse(result) {
             assert.strictEqual(result.status, 200);
             var actualResponse = result.data;
-            Object.keys(expectedResponse).forEach(key => {
+            expectedResponseKeys.forEach(key => {
                 assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
             });
         }
@@ -1150,5 +1173,81 @@ describe('', () => {
                 .then(done)
                 .catch(done);
         })
+    });
+});
+
+
+// ------------ Testing the Store Management APIs for Authorised Solution Providers ---------------
+// Note: These tests are JP-specific and require JP Prod credentials (LIVE-xxx publicKeyId + JP private key).
+// They will NOT work with EU/US/NA credentials. Comment out or skip this block if running non-JP integration tests.
+
+describe('WebStore Client Test Cases - Store Management APIs for Authorised Solution Providers', function () {
+
+    this.timeout(30000);
+
+    var merchantAccountIdForStore;
+    var authTokenForStore;
+    var storeId;
+
+    const expectedCreateStoreResponseKeys = ['storeId', 'allowedOriginDomains', 'allowedRedirectURLs', 'storeName', 'privacyPolicyUrl'];
+
+    // Step 1: Create a merchant account to get merchantAccountId and authorizationToken
+    it('Validating createMerchantAccount API (prerequisite for Store APIs)', (done) => {
+        const merchantHeaders = {
+            'x-amz-pay-idempotency-key': uuidv4().toString().replace(/-/g, '')
+        };
+
+        webStoreClient.createMerchantAccount(createMerchantAccountPayload, merchantHeaders)
+            .then(function (result) {
+                assert.strictEqual(result.status, 201);
+                var actualResponse = result.data;
+                merchantAccountIdForStore = actualResponse.merchantAccountId;
+                authTokenForStore = actualResponse.authorizationToken;
+                assert.ok(merchantAccountIdForStore, 'merchantAccountId should be present');
+                assert.ok(authTokenForStore, 'authorizationToken should be present');
+                done();
+            })
+            .catch(done);
+    });
+
+    // Step 2: Create Store
+    it('Validating createStore API', (done) => {
+        const storeHeaders = {
+            'x-amz-pay-idempotency-key': uuidv4().toString().replace(/-/g, ''),
+            'x-amz-pay-authtoken': authTokenForStore
+        };
+
+        webStoreClient.createStore(merchantAccountIdForStore, createStorePayload, storeHeaders)
+            .then(function (result) {
+                assert.strictEqual(result.status, 201);
+                var actualResponse = result.data;
+                storeId = actualResponse.storeId;
+                assert.ok(storeId, 'storeId should be present in the response');
+                expectedCreateStoreResponseKeys.forEach(key => {
+                    assert.ok(actualResponse.hasOwnProperty(key), `Missing key: ${key}`);
+                });
+                done();
+            })
+            .catch(done);
+    });
+
+    // Step 3: Update Store
+    it('Validating updateStore API', (done) => {
+        const storeHeaders = {
+            'x-amz-pay-authtoken': authTokenForStore
+        };
+
+        webStoreClient.updateStore(merchantAccountIdForStore, storeId, updateStorePayload, storeHeaders)
+            .then(function (result) {
+                assert.strictEqual(result.status, 200);
+                var actualResponse = result.data;
+                assert.strictEqual(actualResponse.storeId, storeId);
+                assert.deepStrictEqual(actualResponse.allowedOriginDomains, ['https://updated-nodejs-test.com', 'https://www.updated-nodejs-test.com']);
+                assert.deepStrictEqual(actualResponse.allowedRedirectURLs, ['https://updated-nodejs-test.com/return', 'https://updated-nodejs-test.com/cancel']);
+                assert.strictEqual(actualResponse.storeName, 'NodeJS SDK Updated Integration Test Store');
+                assert.strictEqual(actualResponse.privacyPolicyUrl, 'https://updated-nodejs-test.com/privacy');
+                done();
+            })
+            .catch(done);
     });
 });

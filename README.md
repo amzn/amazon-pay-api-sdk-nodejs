@@ -6,7 +6,7 @@ Please note the Amazon Pay API SDK can only be used for API calls to the pay-api
 ## Requirements
 
 * Amazon Pay account: To register for Amazon Pay, go to https://pay.amazon.com, choose your region by selecting the flag icon in the upper right corner, and then click "Register".
-* Node 8.0 or higher
+* Node 10.0 or higher
 
 ## Install
 
@@ -15,6 +15,24 @@ To use this module directly, install it as a dependency:
 ```
 npm i @amazonpay/amazon-pay-api-sdk-nodejs
 ```
+
+## Generating Idempotency Keys
+
+Several APIs require a unique `x-amz-pay-idempotency-key` header, and some payloads need a unique reference ID. The code samples in this README generate these with a `uuidv4()` function. The SDK does not depend on any UUID library, so choose one of the following ways to define `uuidv4`:
+
+* Option 1 - Node's built-in `crypto` module (requires Node 14.17 or higher, no extra install). The code samples use this option:
+
+```js
+    const { randomUUID: uuidv4 } = require('crypto');
+```
+
+* Option 2 - The [uuid](https://www.npmjs.com/package/uuid) package. Install it with `npm i uuid` and check its documentation for the Node versions it supports:
+
+```js
+    const { v4: uuidv4 } = require('uuid');
+```
+
+Both options produce a random version 4 UUID, so the rest of the sample code works unchanged.
 
 ## Public and Private Keys
 
@@ -154,6 +172,10 @@ Please contact your Amazon Pay Account Manager before using the In-Store API cal
 * **updateMerchantAccount**(merchantAccountId, payload, headers) &#8594 PATCH to `${version}/merchantAccounts/${merchantAccountId}`
 * **merchantAccountClaim**(merchantAccountId, payload, headers) &#8594 POST to `${version}/merchantAccounts/${merchantAccountId}/claim`
 
+### Amazon Checkout v2 Store Management APIs for Authorised Solution Providers
+* **createStore**(merchantAccountId, payload, headers) &#8594; POST to `${version}/merchantAccounts/${merchantAccountId}/stores`
+* **updateStore**(merchantAccountId, storeId, payload, headers) &#8594; PATCH to `${version}/merchantAccounts/${merchantAccountId}/stores/${storeId}`
+
 # Using Convenience Functions
 
 Four quick steps are needed to make an API call:
@@ -244,7 +266,7 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 
 ``` js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { randomUUID: uuidv4 } = require('crypto');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -468,7 +490,7 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 ## Checkout v2 - Create Charge API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { randomUUID: uuidv4 } = require('crypto');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -567,7 +589,7 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 
 ``` js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { randomUUID: uuidv4 } = require('crypto');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -634,7 +656,7 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
 
 ``` js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { randomUUID: uuidv4 } = require('crypto');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -716,7 +738,7 @@ Example call to generateButtonSignature function:
 
 ``` js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { randomUUID: uuidv4 } = require('crypto');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -843,7 +865,7 @@ Example request method:
 ## Amazon Checkout v2 Reporting APIs - GetReport API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { randomUUID: uuidv4 } = require('crypto');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -870,7 +892,7 @@ Example request method:
 ## Amazon Checkout v2 Reporting APIs - GetReportById API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { randomUUID: uuidv4 } = require('crypto');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -895,7 +917,7 @@ Example request method:
 ## Amazon Checkout v2 Reporting APIs - GetReportDocument API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { randomUUID: uuidv4 } = require('crypto');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -920,7 +942,7 @@ Example request method:
 ## Amazon Checkout v2 Reporting APIs - GetReportSchedules API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { randomUUID: uuidv4 } = require('crypto');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -945,7 +967,7 @@ Example request method:
 ## Amazon Checkout v2 Reporting APIs - GetReportScheduleById API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { randomUUID: uuidv4 } = require('crypto');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -970,7 +992,7 @@ Example request method:
 ## Amazon Checkout v2 Reporting APIs - CreateReport API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { randomUUID: uuidv4 } = require('crypto');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -999,7 +1021,7 @@ Example request method:
 ## Amazon Checkout v2 Reporting APIs - CreateReportSchedule API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { randomUUID: uuidv4 } = require('crypto');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -1029,7 +1051,7 @@ Example request method:
 ## Amazon Checkout v2 Reporting APIs - CancelReportSchedule API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { randomUUID: uuidv4 } = require('crypto');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -1054,7 +1076,7 @@ Example request method:
 ## Amazon Checkout v2 SPC - Finalize Checkout Session API
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { randomUUID: uuidv4 } = require('crypto');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -1109,7 +1131,7 @@ Example request method:
 
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { randomUUID: uuidv4 } = require('crypto');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -1253,7 +1275,7 @@ const fs = require('fs');
 
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { randomUUID: uuidv4 } = require('crypto');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -1287,7 +1309,7 @@ const fs = require('fs');
 
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { randomUUID: uuidv4 } = require('crypto');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -1392,7 +1414,7 @@ const fs = require('fs');
 
 ```js
     const fs = require('fs');
-    const uuidv4 = require('uuid/v4');
+    const { randomUUID: uuidv4 } = require('crypto');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
@@ -1477,6 +1499,90 @@ const fs = require('fs');
     response.then(function (result) {
         console.log(result.data);
         console.log('Location:', result.headers["location"]);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+
+## Amazon Checkout v2 Store Management APIs - Create Store API
+
+Note: This API is restricted to allowlisted Solution Providers only.
+
+```js
+    const fs = require('fs');
+    const { randomUUID: uuidv4 } = require('crypto');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: false,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const payload = {
+        allowedOriginDomains: ['https://example.com', 'https://www.example.com'],
+        allowedRedirectURLs: ['https://example.com/return', 'https://example.com/cancel'],
+        storeName: 'My Store',
+        privacyPolicyUrl: 'https://example.com/privacy',
+        merchantLogoUrl: 'https://example.com/logo.png'
+    };
+
+    const headers = {
+        'x-amz-pay-idempotency-Key': uuidv4().toString().replace(/-/g, ''),
+        'x-amz-pay-authToken': 'YOUR_AUTH_TOKEN'
+    };
+
+    const merchantAccountId = 'MERCHANT_ACCOUNT_ID';
+
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.createStore(merchantAccountId, payload, headers);
+
+    response.then(function (result) {
+        console.log(result.data);
+    }).catch(err => {
+        console.log(err);
+    });
+```
+
+## Amazon Checkout v2 Store Management APIs - Update Store API
+
+Note: This API is restricted to allowlisted Solution Providers only.
+
+```js
+    const fs = require('fs');
+    const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
+
+    const config = {
+        publicKeyId: 'YOUR_PUBLIC_KEY_ID',
+        privateKey: fs.readFileSync('tst/private.pem'),
+        region: 'YOUR_REGION_CODE',
+        sandbox: false,
+        algorithm: 'AMZN-PAY-RSASSA-PSS-V2' // Amazon Signing Algorithm, Optional: uses AMZN-PAY-RSASSA-PSS if not specified
+    };
+
+    const payload = {
+        allowedOriginDomains: ['https://updated-example.com', 'https://www.updated-example.com'],
+        allowedRedirectURLs: ['https://updated-example.com/return', 'https://updated-example.com/cancel'],
+        storeName: 'Updated Store Name',
+        privacyPolicyUrl: 'https://updated-example.com/privacy',
+        merchantLogoUrl: 'https://updated-example.com/new-logo.png'
+    };
+
+    const headers = {
+        'x-amz-pay-authToken': 'YOUR_AUTH_TOKEN'
+    };
+
+    const merchantAccountId = 'MERCHANT_ACCOUNT_ID';
+    const storeId = 'STORE_ID';
+
+    const testPayClient = new Client.WebStoreClient(config);
+    const response = testPayClient.updateStore(merchantAccountId, storeId, payload, headers);
+
+    response.then(function (result) {
+        console.log(result.data);
     }).catch(err => {
         console.log(err);
     });

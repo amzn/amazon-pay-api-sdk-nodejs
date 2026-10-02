@@ -3,6 +3,7 @@
 const constants = require('./constants');
 const crypto = require('crypto');
 const axios = require('axios');
+const https = require('https');
 
 module.exports = {
     signHeaders: signHeaders,
@@ -21,7 +22,6 @@ function getTimestamp() {
 
 function getAPIEndpointBaseURL(configArgs) {
     if ((configArgs.overrideServiceUrl) && (configArgs.overrideServiceUrl.length > 0)) {
-        process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0; // devo environment using self-signed certificate
         return configArgs.overrideServiceUrl;
     } else
         return constants.API_ENDPOINTS[constants.REGION_MAP[configArgs.region.toLowerCase()]];
@@ -40,6 +40,12 @@ function invokeApi(configArgs, apiOptions, maxRedirects) {
             return (status >= 200 && status < 300) || (maxRedirects === 0 && status === 303);
         }
     };
+
+    // Override endpoints (dev/test) may use self-signed certificates. Relax verification
+    // for this request only via a per-request agent; never mutate process-wide TLS settings.
+    if ((configArgs.overrideServiceUrl) && (configArgs.overrideServiceUrl.length > 0)) {
+        options.httpsAgent = new https.Agent({ rejectUnauthorized: false });
+    }
 
     const response = this.retryLogic(options, 1);
 

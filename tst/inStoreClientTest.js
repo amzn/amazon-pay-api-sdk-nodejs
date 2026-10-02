@@ -4,7 +4,7 @@
 const Client = require('../src/client');
 const config = require('./config');
 const assert = require('assert');
-const uuidv4 = require('uuid/v4');
+const { randomUUID: uuidv4 } = require('crypto');
 const headers = {
     'x-amz-pay-idempotency-key': uuidv4().toString().replace(/-/g, '')
 };

@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    SDK_VERSION: '2.3.4',
+    SDK_VERSION: '2.3.6',
     API_VERSION: 'v2',
     RETRIES: 3,
     DEFAULT_REDIRECT: 5,
@@ -25,5 +25,6 @@ module.exports = {
     ACCOUNT_MANAGEMENT: 'merchantAccounts',
     DISPUTES: 'disputes',
     CONTEXT: 'contest',
-    FILES: 'files'
+    FILES: 'files',
+    STORES: 'stores'
 };
