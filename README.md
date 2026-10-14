@@ -168,9 +168,9 @@ Please contact your Amazon Pay Account Manager before using the In-Store API cal
 * **uploadFile**($payload,headers) &#8594; POST to `${version}/files`
 
 ### Amazon Checkout v2 Merchant Onboarding & Account Management APIs for Authorised Solution Providers
-* **createMerchantAccount**(payload, headers = null) &#8594 POST to `${version}/merchantAccounts`
-* **updateMerchantAccount**(merchantAccountId, payload, headers) &#8594 PATCH to `${version}/merchantAccounts/${merchantAccountId}`
-* **merchantAccountClaim**(merchantAccountId, payload, headers) &#8594 POST to `${version}/merchantAccounts/${merchantAccountId}/claim`
+* **createMerchantAccount**(payload, headers = null) &#8594; POST to `${version}/merchantAccounts`
+* **updateMerchantAccount**(merchantAccountId, payload, headers) &#8594; PATCH to `${version}/merchantAccounts/${merchantAccountId}`
+* **merchantAccountClaim**(merchantAccountId, payload, headers) &#8594; POST to `${version}/merchantAccounts/${merchantAccountId}/claim`
 
 ### Amazon Checkout v2 Store Management APIs for Authorised Solution Providers
 * **createStore**(merchantAccountId, payload, headers) &#8594; POST to `${version}/merchantAccounts/${merchantAccountId}/stores`
@@ -229,7 +229,7 @@ If you are a Solution Provider and need to make an API call on behalf of a diffe
     const testHeaders = {
         'x-amz-pay-authtoken': 'other_merchant_super_secret_token'
     };
-    const response = testpayClient.merchantScan(payload, testHeaders);
+    const response = testPayClient.merchantScan(payload, testHeaders);
 ```
 
 # Convenience Functions Code Samples
@@ -851,7 +851,7 @@ Example request method:
         },
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
             'X-Amz-Pay-Region': 'us'
         }
     };
@@ -1176,7 +1176,7 @@ Example request method:
 ## Amazon Checkout v2 Dispute APIs - Get Dispute API
 
 ```js
-const fs = require('fs');
+    const fs = require('fs');
     const Client = require('@amazonpay/amazon-pay-api-sdk-nodejs');
 
     const config = {
